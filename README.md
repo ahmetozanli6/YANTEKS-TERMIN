@@ -1,1 +1,837 @@
-# TERM-N
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+    <meta name="theme-color" content="#0F172A">
+    <title>Yanteks Pro | Canlı Termin Takip</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel (Modül desteği ile) -->
+    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- SheetJS (Excel ve CSV İçe Aktarma) -->
+    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        ypDark: '#0F172A',
+                        ypCard: '#1E293B',
+                        ypBorder: '#334155',
+                        ypTeal: '#0891B2',
+                        ypText1: '#F8FAFC',
+                        ypText2: '#94A3B8'
+                    },
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body { background-color: #0F172A; color: #F8FAFC; margin: 0; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0F172A; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .glass-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #334155; }
+        .modal-overlay { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
+        
+        /* Loading Spinner */
+        .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #0891B2; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js';
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js';
+        import { getFirestore, collection, addDoc, updateDoc, deleteDoc, doc, onSnapshot } from 'https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js';
+
+        // --- FIREBASE KURULUMU ---
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yanteks-termin-app';
+
+        // --- İKONLAR ---
+        const IcoSearch = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
+        const IcoCalendar = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
+        const IcoAlert = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
+        const IcoCheck = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
+        const IcoPackage = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
+        const IcoPlus = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
+        const IcoTrash = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
+        const IcoUndo = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>;
+        const IcoDatabase = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>;
+        const IcoUpload = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>;
+        const IcoDownload = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
+        const IcoWhatsapp = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>;
+
+        function App() {
+            const [user, setUser] = React.useState(null);
+            const [terminData, setTerminData] = React.useState([]);
+            const [loading, setLoading] = React.useState(true);
+            
+            const [search, setSearch] = React.useState('');
+            const [filterStatus, setFilterStatus] = React.useState('PENDING_ALL'); // PENDING_ALL, DANGER, WARNING, DELIVERED
+            
+            const [isModalOpen, setIsModalOpen] = React.useState(false);
+            const [isImporting, setIsImporting] = React.useState(false);
+            const [toast, setToast] = React.useState(null);
+            const fileInputRef = React.useRef(null);
+            
+            // Satır İçi Düzenleme State'leri
+            const [editingRowId, setEditingRowId] = React.useState(null);
+            const [editForm, setEditForm] = React.useState({});
+
+            // Bildirimlerin 3 saniye sonra kaybolması için
+            React.useEffect(() => {
+                if (toast) {
+                    const timer = setTimeout(() => setToast(null), 3000);
+                    return () => clearTimeout(timer);
+                }
+            }, [toast]);
+
+            // 1. Yetkilendirme (Auth) İşlemleri
+            React.useEffect(() => {
+                const initAuth = async () => {
+                    try {
+                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                            await signInWithCustomToken(auth, __initial_auth_token);
+                        } else {
+                            await signInAnonymously(auth);
+                        }
+                    } catch (error) {
+                        console.error("Auth Error:", error);
+                    }
+                };
+                initAuth();
+                const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+                    setUser(currentUser);
+                });
+                return () => unsubscribe();
+            }, []);
+
+            // 2. Canlı Veri Çekme (Real-time Snapshot)
+            React.useEffect(() => {
+                if (!user) return;
+                
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'terminler');
+                const unsubscribe = onSnapshot(colRef, (snapshot) => {
+                    const data = snapshot.docs.map(doc => ({
+                        id: doc.id,
+                        ...doc.data()
+                    }));
+                    // Ekleme tarihine göre sırala (en yeniler üstte)
+                    data.sort((a, b) => b.createdAt - a.createdAt);
+                    setTerminData(data);
+                    setLoading(false);
+                }, (error) => {
+                    console.error("Veri çekme hatası:", error);
+                    setLoading(false);
+                });
+
+                return () => unsubscribe();
+            }, [user]);
+
+            // --- İŞLEMLER ---
+
+            const handleAddTermin = async (formData) => {
+                if (!user) return;
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'terminler');
+                
+                // Kullanıcının seçtiği sipariş tarihini formatla, seçilmediyse bugünü al
+                const dateObj = formData.siparisTarihi ? new Date(formData.siparisTarihi) : new Date();
+                const sipTarihiStr = dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                
+                await addDoc(colRef, {
+                    cari: formData.cari,
+                    malzeme: formData.malzeme,
+                    miktar: formData.miktar ? Number(formData.miktar) : null,
+                    termin: formData.termin || null, // Boş bırakıldıysa null kaydet
+                    tarih: sipTarihiStr, 
+                    status: 'PENDING',
+                    createdAt: Date.now()
+                });
+                setIsModalOpen(false);
+            };
+
+            const toggleStatus = async (id, currentStatus) => {
+                if (!user) return;
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'terminler', id);
+                const newStatus = currentStatus === 'PENDING' ? 'DELIVERED' : 'PENDING';
+                await updateDoc(docRef, { status: newStatus });
+            };
+
+            const deleteTermin = async (id) => {
+                if (!user) return;
+                // Gerçek bir uygulamada confirmation (onay) modalı açılır, burada iframe kısıtlamaları yüzünden direkt siliyoruz
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'terminler', id);
+                await deleteDoc(docRef);
+            };
+
+            const loadSampleData = async () => {
+                if (!user) return;
+                setLoading(true);
+                const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'terminler');
+                
+                // Bugüne göre dinamik tarihler üretelim ki hep anlamlı veriler olsun
+                const today = new Date();
+                const format = (d) => d.toISOString().split('T')[0];
+                const addDays = (d, days) => { const nd = new Date(d); nd.setDate(nd.getDate() + days); return nd; };
+                const bugunStr = today.toLocaleDateString('tr-TR');
+
+                const samples = [
+                    { cari: "Tuvana Evteks", malzeme: "YAN 1183 EKRU", miktar: 150, termin: format(addDays(today, 2)), status: 'PENDING' },
+                    { cari: "Cac Tekstil", malzeme: "165/48 YAN TTM", miktar: 300, termin: format(addDays(today, 8)), status: 'PENDING' },
+                    { cari: "Yılkar Tekstil", malzeme: "YAN 1551 GÜMÜŞ", miktar: null, termin: format(addDays(today, 15)), status: 'PENDING' },
+                    { cari: "Sabırer Tekstil", malzeme: "YAN 1427 ALTIN", miktar: 400, termin: format(addDays(today, -1)), status: 'DELIVERED' },
+                ];
+
+                for (const item of samples) {
+                    await addDoc(colRef, { ...item, tarih: bugunStr, createdAt: Date.now() });
+                }
+                setLoading(false);
+            };
+
+            // Excel'den Veri Okuma Fonksiyonu
+            const handleExcelImport = (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                setIsImporting(true);
+                const reader = new FileReader();
+                
+                reader.onload = async (evt) => {
+                    try {
+                        const bstr = evt.target.result;
+                        const wb = XLSX.read(bstr, { type: 'binary' });
+                        const wsname = wb.SheetNames[0];
+                        const ws = wb.Sheets[wsname];
+                        const data = XLSX.utils.sheet_to_json(ws);
+
+                        let basariliKayit = 0;
+                        const colRef = collection(db, 'artifacts', appId, 'public', 'data', 'terminler');
+
+                        for (let i = 0; i < data.length; i++) {
+                            const row = data[i];
+                            
+                            // Gönderdiğiniz dosyaya göre sütun kontrolleri
+                            const cari = row["Cari Unvan"] || row["Cari"] || row["Müşteri"] || "Bilinmiyor";
+                            const malzeme = row["Malzeme Aciklama"] || row["Malzeme Açıklama"] || row["Malzeme"] || "-";
+                            const miktarVal = row["Miktar"];
+                            const miktar = miktarVal != null ? Number(miktarVal) : null;
+                            
+                            // Termin tarihini standartlaştır (Excel formatını yakala)
+                            let termin = row["TERMİN"] || row["Termin"] || row["Termin Tarihi"];
+                            if (typeof termin === 'number') {
+                                const date = new Date(Math.round((termin - 25569) * 86400 * 1000));
+                                termin = date.toISOString().split('T')[0];
+                            } else if (typeof termin === 'string') {
+                                if(termin.includes('.')) {
+                                    const parts = termin.split('.');
+                                    if(parts.length === 3) termin = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                                }
+                            } else {
+                                termin = null; // Termin opsiyonel olduğu için bulamazsa boş bırak
+                            }
+
+                            const sipTarihi = row["Siparis Tarihi"] || row["Sipariş Tarihi"] || new Date().toLocaleDateString('tr-TR');
+
+                            if (cari !== "Bilinmiyor") {
+                                await addDoc(colRef, {
+                                    cari: String(cari),
+                                    malzeme: String(malzeme),
+                                    miktar: miktar,
+                                    termin: termin,
+                                    tarih: sipTarihi,
+                                    status: 'PENDING',
+                                    createdAt: Date.now() + i 
+                                });
+                                basariliKayit++;
+                            }
+                        }
+
+                        setToast({ type: 'success', message: `${basariliKayit} sipariş başarıyla içe aktarıldı.` });
+                    } catch (error) {
+                        console.error("Excel okuma hatası:", error);
+                        setToast({ type: 'error', message: 'Dosya okunurken bir hata oluştu!' });
+                    } finally {
+                        setIsImporting(false);
+                        if (fileInputRef.current) fileInputRef.current.value = '';
+                    }
+                };
+                reader.readAsBinaryString(file);
+            };
+
+            // Excel'e Veri Yazma (Dışarı Aktarma)
+            const handleExcelExport = () => {
+                if (filteredData.length === 0) {
+                    setToast({ type: 'error', message: 'Dışarı aktarılacak veri bulunamadı!' });
+                    return;
+                }
+                
+                const exportData = filteredData.map(row => {
+                    const statusInfo = getStatusInfo(row.termin, row.status);
+                    return {
+                        "Cari Unvan": row.cari,
+                        "Sipariş Tarihi": row.tarih,
+                        "Malzeme Açıklama": row.malzeme,
+                        "Miktar": row.miktar != null ? row.miktar : "",
+                        "Termin Tarihi": row.termin ? new Date(row.termin).toLocaleDateString('tr-TR') : "Belirsiz",
+                        "Durum": statusInfo.label
+                    };
+                });
+
+                const ws = XLSX.utils.json_to_sheet(exportData);
+                const wb = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb, ws, "Terminler");
+                XLSX.writeFile(wb, `Termin_Listesi_${new Date().toLocaleDateString('tr-TR')}.xlsx`);
+                setToast({ type: 'success', message: 'Liste Excel olarak indirildi.' });
+            };
+
+            // WhatsApp Üzerinden Paylaşma Fonksiyonu
+            const handleWhatsappShare = () => {
+                if (filteredData.length === 0) {
+                    setToast({ type: 'error', message: 'Paylaşılacak termin kaydı bulunmuyor.' });
+                    return;
+                }
+
+                const todayStr = new Date().toLocaleDateString('tr-TR');
+                
+                // Özet Bilgiler (Sadece PENDING ve o an filtrelenmiş veriler)
+                let acilSayisi = 0;
+                let bekleyenToplam = 0;
+                
+                const aktifListe = filteredData.filter(item => item.status === 'PENDING');
+                
+                aktifListe.forEach(item => {
+                    bekleyenToplam += (item.miktar || 0);
+                    const st = getStatusInfo(item.termin, item.status).type;
+                    if (st === 'DANGER') acilSayisi++;
+                });
+
+                // Mesaj Taslağı Oluştur
+                let message = `*YANTEKS PRO GÜNLÜK TERMİN ÖZETİ* 📅 (${todayStr})\n\n`;
+                message += `📦 *Bekleyen Toplam Sipariş:* ${aktifListe.length} Kalem\n`;
+                message += `⚖️ *Bekleyen Toplam Miktar:* ${bekleyenToplam.toLocaleString('tr-TR')} kg/mt\n`;
+                
+                if (acilSayisi > 0) {
+                    message += `🚨 *DİKKAT! Acil Terminler (< 3 Gün):* ${acilSayisi} Kalem\n`;
+                }
+
+                message += `\n*-- ÖNE ÇIKAN SİPARİŞLER --*\n`;
+                
+                // İlk 10 siparişi mesaja ekle (Çok uzun olmaması için)
+                const limit = Math.min(aktifListe.length, 10);
+                for (let i = 0; i < limit; i++) {
+                    const row = aktifListe[i];
+                    const termDateStr = row.termin ? new Date(row.termin).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }) : 'Belirsiz';
+                    const miktarStr = row.miktar != null ? row.miktar : '-';
+                    const statusType = getStatusInfo(row.termin, row.status).type;
+                    
+                    let icon = '⏱️';
+                    if (statusType === 'DANGER') icon = '🔴';
+                    if (statusType === 'WARNING') icon = '🟠';
+                    
+                    message += `${icon} *${row.cari}* | ${row.malzeme} | Miktar: ${miktarStr} | Termin: ${termDateStr}\n`;
+                }
+
+                if (aktifListe.length > 10) {
+                    message += `\n_...ve ${aktifListe.length - 10} sipariş daha devam ediyor._\n`;
+                }
+                
+                message += `\n_Yanteks Pro Termin Sistemi üzerinden otomatik oluşturulmuştur._`;
+
+                // Metni URL formatına çevir ve WhatsApp API'sini çağır
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
+                
+                window.open(whatsappUrl, '_blank');
+            };
+
+            // Satır Düzenleme Fonksiyonları
+            const handleRowClick = (row) => {
+                if (row.status === 'DELIVERED') return; // Teslim edilenler doğrudan düzenlenmesin
+                if (editingRowId === row.id) return;
+                
+                // dd.mm.yyyy formatındaki tarihi input type="date" için yyyy-mm-dd formatına çevir
+                let sipTarihiForInput = "";
+                if (row.tarih) {
+                    const parts = row.tarih.split('.');
+                    if(parts.length === 3) sipTarihiForInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                    else sipTarihiForInput = row.tarih;
+                }
+
+                setEditForm({
+                    ...row,
+                    siparisTarihi: sipTarihiForInput,
+                    miktar: row.miktar != null ? row.miktar : ''
+                });
+                setEditingRowId(row.id);
+            };
+
+            const handleSaveEdit = async (id) => {
+                if (!user) return;
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'terminler', id);
+                
+                let sipTarihiStr = editForm.tarih;
+                if (editForm.siparisTarihi) {
+                    const d = new Date(editForm.siparisTarihi);
+                    if (!isNaN(d.getTime())) {
+                        sipTarihiStr = d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    }
+                }
+
+                await updateDoc(docRef, {
+                    cari: editForm.cari,
+                    malzeme: editForm.malzeme,
+                    miktar: editForm.miktar !== '' && editForm.miktar != null ? Number(editForm.miktar) : null,
+                    termin: editForm.termin || null,
+                    tarih: sipTarihiStr
+                });
+                
+                setEditingRowId(null);
+                setToast({ type: 'success', message: 'Sipariş güncellendi.' });
+            };
+
+            // --- HESAPLAMALAR & FİLTRELER ---
+
+            const TODAY = new Date();
+            TODAY.setHours(0,0,0,0);
+
+            const getStatusInfo = (terminDateStr, status) => {
+                if (status === 'DELIVERED') {
+                    return { type: 'DELIVERED', label: 'Teslim Edildi', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', dot: 'bg-emerald-500' };
+                }
+
+                if (!terminDateStr) {
+                    return { type: 'UNKNOWN', label: 'Belirsiz', color: 'bg-slate-500/10 text-slate-400 border-slate-500/20', dot: 'bg-slate-500' };
+                }
+
+                const terminDate = new Date(terminDateStr);
+                const diffTime = terminDate - TODAY;
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+                if (diffDays <= 3) return { type: 'DANGER', label: 'Çok Acil', color: 'bg-red-500/10 text-red-400 border-red-500/20', dot: 'bg-red-500' };
+                else if (diffDays <= 10) return { type: 'WARNING', label: 'Yaklaşıyor', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', dot: 'bg-amber-500' };
+                else return { type: 'SAFE', label: 'Zamanı Var', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', dot: 'bg-blue-500' };
+            };
+
+            const filteredData = React.useMemo(() => {
+                return terminData.filter(item => {
+                    const matchesSearch = item.cari.toLowerCase().includes(search.toLowerCase()) || 
+                                          item.malzeme.toLowerCase().includes(search.toLowerCase());
+                    
+                    const calculatedStatus = getStatusInfo(item.termin, item.status).type;
+                    
+                    let matchesStatus = false;
+                    if (filterStatus === 'PENDING_ALL') matchesStatus = item.status === 'PENDING';
+                    else if (filterStatus === 'DELIVERED') matchesStatus = item.status === 'DELIVERED';
+                    else matchesStatus = calculatedStatus === filterStatus && item.status === 'PENDING';
+
+                    return matchesSearch && matchesStatus;
+                });
+            }, [terminData, search, filterStatus]);
+
+            const stats = React.useMemo(() => {
+                let pendingCount = 0;
+                let danger = 0;
+                let warning = 0;
+                let pendingAmount = 0;
+
+                terminData.forEach(item => {
+                    if (item.status === 'PENDING') {
+                        pendingCount++;
+                        pendingAmount += (item.miktar || 0); // Miktar null ise 0 sayılacak
+                        const stType = getStatusInfo(item.termin, item.status).type;
+                        if (stType === 'DANGER') danger++;
+                        if (stType === 'WARNING') warning++;
+                    }
+                });
+
+                return { pendingCount, danger, warning, pendingAmount };
+            }, [terminData]);
+
+            // --- RENDER ---
+            
+            if (loading) {
+                return (
+                    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
+                        <div className="spinner"></div>
+                        <p className="text-ypText2 animate-pulse">Sistem Bağlantısı Kuruluyor...</p>
+                    </div>
+                );
+            }
+
+            return (
+                <div className="min-h-screen pb-10">
+                    <header className="glass-header sticky top-0 z-10 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-ypTeal flex items-center justify-center shadow-lg shadow-ypTeal/20">
+                                <span className="text-xl font-bold text-white">Y</span>
+                            </div>
+                            <div>
+                                <h1 className="text-xl font-semibold tracking-tight text-ypText1">Yanteks Pro</h1>
+                                <p className="text-sm text-ypText2">Canlı Termin Takip</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <div className="relative w-full md:w-64">
+                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ypText2">
+                                    <IcoSearch />
+                                </span>
+                                <input 
+                                    type="text" 
+                                    placeholder="Cari veya Malzeme ara..." 
+                                    value={search}
+                                    onChange={(e) => setSearch(e.target.value)}
+                                    className="w-full bg-ypCard border border-ypBorder rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder-ypText2 focus:outline-none focus:border-ypTeal focus:ring-1 focus:ring-ypTeal transition-all"
+                                />
+                            </div>
+
+                            {/* Gizli Dosya Girişi */}
+                            <input 
+                                type="file" 
+                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
+                                ref={fileInputRef}
+                                onChange={handleExcelImport}
+                                className="hidden" 
+                            />
+
+                            {/* WhatsApp Butonu Eklendi (Sadece Mobil Ekranlarda İkon, Genişte Yazı) */}
+                            <button 
+                                onClick={handleWhatsappShare}
+                                className="flex items-center gap-2 bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366] text-[#25D366] hover:text-white font-semibold py-2 px-4 rounded-lg transition-all whitespace-nowrap"
+                                title="Günlük Özeti WhatsApp'ta Paylaş"
+                            >
+                                <IcoWhatsapp /> <span className="hidden sm:inline">Paylaş</span>
+                            </button>
+                            
+                            <button 
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isImporting}
+                                className="hidden sm:flex items-center gap-2 bg-ypCard border border-ypBorder hover:border-ypTeal text-white font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                <IcoUpload /> İçe Aktar
+                            </button>
+
+                            <button 
+                                onClick={handleExcelExport}
+                                className="flex items-center gap-2 bg-ypCard border border-ypBorder hover:border-emerald-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                <IcoDownload /> Dışarı Aktar
+                            </button>
+
+                            <button 
+                                onClick={() => setIsModalOpen(true)}
+                                className="flex items-center gap-2 bg-ypTeal hover:bg-ypTealLight text-ypDark font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
+                            >
+                                <IcoPlus /> Yeni Termin
+                            </button>
+                        </div>
+                    </header>
+
+                    {/* Toast Notification (Sağ alt köşe bildirimleri) */}
+                    {toast && (
+                        <div className="fixed bottom-6 right-6 z-50 animate-[fadeIn_0.3s_ease-out]">
+                            <div className={`px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
+                                {toast.type === 'success' ? <IcoCheck /> : <IcoAlert />}
+                                <span className="font-medium text-sm">{toast.message}</span>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Yükleme Ekranı (İçe Aktarma Sırasında) */}
+                    {isImporting && (
+                        <div className="fixed inset-0 z-[60] flex items-center justify-center modal-overlay">
+                            <div className="bg-ypCard border border-ypBorder p-8 rounded-2xl flex flex-col items-center gap-4 shadow-2xl">
+                                <div className="spinner"></div>
+                                <h3 className="text-lg text-white font-medium">Veriler İçe Aktarılıyor...</h3>
+                                <p className="text-sm text-ypText2">Kayıt sayısına göre biraz sürebilir, lütfen bekleyin.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 mt-8">
+                        {terminData.length === 0 ? (
+                            <div className="bg-ypCard border border-dashed border-ypBorder rounded-2xl p-12 flex flex-col items-center justify-center text-center">
+                                <div className="w-16 h-16 rounded-full bg-ypDark flex items-center justify-center text-ypText2 mb-4">
+                                    <IcoDatabase />
+                                </div>
+                                <h3 className="text-xl font-medium text-white mb-2">Henüz Hiç Kayıt Yok</h3>
+                                <p className="text-ypText2 max-w-md mb-6">Sisteme henüz hiç termin eklenmemiş. Yukarıdaki "Yeni Termin" butonunu kullanarak eklemeye başlayabilir veya örnek verilerle sistemi test edebilirsiniz.</p>
+                                <button onClick={loadSampleData} className="px-5 py-2.5 bg-ypBorder hover:bg-ypBorder/80 text-white rounded-lg transition-colors text-sm font-medium">
+                                    Test Verisi Yükle
+                                </button>
+                            </div>
+                        ) : (
+                            <>
+                                {/* Summary Cards */}
+                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                                    <StatCard 
+                                        title="Bekleyen Sipariş Kalemi" 
+                                        value={stats.pendingCount} 
+                                        icon={<IcoPackage />} 
+                                        color="bg-blue-500/10 text-blue-400" 
+                                    />
+                                    <StatCard 
+                                        title="Bekleyen Toplam Miktar" 
+                                        value={`${stats.pendingAmount.toLocaleString('tr-TR')} kg/mt`} 
+                                        icon={<IcoCheck />} 
+                                        color="bg-teal-500/10 text-teal-400" 
+                                    />
+                                    <StatCard 
+                                        title="Acil Terminler (< 3 Gün)" 
+                                        value={stats.danger} 
+                                        icon={<IcoAlert />} 
+                                        color="bg-red-500/10 text-red-400" 
+                                        danger={stats.danger > 0}
+                                    />
+                                    <StatCard 
+                                        title="Yaklaşan Terminler" 
+                                        value={stats.warning} 
+                                        icon={<IcoCalendar />} 
+                                        color="bg-amber-500/10 text-amber-400" 
+                                    />
+                                </div>
+
+                                {/* Filters & Table */}
+                                <div className="bg-ypCard border border-ypBorder rounded-2xl shadow-xl overflow-hidden">
+                                    <div className="p-4 border-b border-ypBorder flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                        <h2 className="text-lg font-medium text-white flex items-center gap-2">
+                                            <IcoCalendar /> Termin Listesi
+                                            <span className="text-xs text-ypText2 font-normal ml-2 hidden sm:inline">(Düzenlemek için satıra tıklayın)</span>
+                                        </h2>
+                                        <div className="flex flex-wrap gap-2 p-1 bg-ypDark rounded-lg">
+                                            <FilterBtn label="Bekleyenler" active={filterStatus === 'PENDING_ALL'} onClick={() => setFilterStatus('PENDING_ALL')} />
+                                            <FilterBtn label="Acil" active={filterStatus === 'DANGER'} onClick={() => setFilterStatus('DANGER')} className="text-red-400 hover:text-red-300" />
+                                            <FilterBtn label="Yaklaşan" active={filterStatus === 'WARNING'} onClick={() => setFilterStatus('WARNING')} className="text-amber-400 hover:text-amber-300" />
+                                            <FilterBtn label="Tamamlananlar" active={filterStatus === 'DELIVERED'} onClick={() => setFilterStatus('DELIVERED')} className="text-emerald-400 hover:text-emerald-300" />
+                                        </div>
+                                    </div>
+
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-left border-collapse min-w-[800px]">
+                                            <thead>
+                                                <tr className="bg-ypDark/50 text-ypText2 text-sm uppercase tracking-wider">
+                                                    <th className="py-4 px-6 font-medium">Cari Unvan</th>
+                                                    <th className="py-4 px-6 font-medium">Sipariş Tar.</th>
+                                                    <th className="py-4 px-6 font-medium">Malzeme Açıklama</th>
+                                                    <th className="py-4 px-6 font-medium text-right">Miktar</th>
+                                                    <th className="py-4 px-6 font-medium text-center">Termin</th>
+                                                    <th className="py-4 px-6 font-medium text-center">Durum</th>
+                                                    <th className="py-4 px-6 font-medium text-right">İşlemler</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-ypBorder/50">
+                                                {filteredData.length > 0 ? (
+                                                    filteredData.map((row) => {
+                                                        const status = getStatusInfo(row.termin, row.status);
+                                                        const termDate = row.termin ? new Date(row.termin).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+                                                        const isDelivered = row.status === 'DELIVERED';
+                                                        
+                                                        // EĞER BU SATIR DÜZENLENİYORSA GİRİŞ FORMLARINI GÖSTER
+                                                        if (editingRowId === row.id) {
+                                                            return (
+                                                                <tr key={row.id} className="bg-ypTeal/10 border-l-2 border-ypTeal shadow-lg">
+                                                                    <td className="py-3 px-4">
+                                                                        <input type="text" value={editForm.cari} onChange={e => setEditForm({...editForm, cari: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none" placeholder="Cari..." />
+                                                                    </td>
+                                                                    <td className="py-3 px-4">
+                                                                        <input type="date" value={editForm.siparisTarihi} onChange={e => setEditForm({...editForm, siparisTarihi: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none [color-scheme:dark]" title="Sipariş Tarihi" />
+                                                                    </td>
+                                                                    <td className="py-3 px-4">
+                                                                        <input type="text" value={editForm.malzeme} onChange={e => setEditForm({...editForm, malzeme: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none" placeholder="Malzeme..." />
+                                                                    </td>
+                                                                    <td className="py-3 px-4">
+                                                                        <input type="number" min="0" value={editForm.miktar} onChange={e => setEditForm({...editForm, miktar: e.target.value})} className="w-full min-w-[60px] bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none text-right" placeholder="Miktar" />
+                                                                    </td>
+                                                                    <td className="py-3 px-4">
+                                                                        <input type="date" value={editForm.termin || ''} onChange={e => setEditForm({...editForm, termin: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none [color-scheme:dark]" title="Termin Tarihi" />
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-center text-xs text-ypTeal font-medium">
+                                                                        Düzenleniyor...
+                                                                    </td>
+                                                                    <td className="py-3 px-4 text-right">
+                                                                        <div className="flex items-center justify-end gap-2">
+                                                                            <button onClick={() => handleSaveEdit(row.id)} className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors" title="Kaydet">
+                                                                                <IcoCheck />
+                                                                            </button>
+                                                                            <button onClick={() => setEditingRowId(null)} className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-white transition-colors border border-ypBorder" title="İptal">
+                                                                                ✕
+                                                                            </button>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            );
+                                                        }
+
+                                                        // NORMAL GÖRÜNÜM (Tıklanabilir Hücreler)
+                                                        return (
+                                                            <tr key={row.id} className={`transition-colors group ${isDelivered ? 'bg-ypDark/20 opacity-75' : 'hover:bg-white/[0.04] cursor-pointer'}`}>
+                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 font-medium whitespace-nowrap ${isDelivered ? 'text-ypText2 line-through' : 'text-white'}`}>{row.cari}</td>
+                                                                <td onClick={() => handleRowClick(row)} className="py-4 px-6 text-ypText2 text-sm whitespace-nowrap">{row.tarih}</td>
+                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-sm max-w-[200px] truncate ${isDelivered ? 'text-ypText2' : 'text-ypText1'}`} title={row.malzeme}>{row.malzeme}</td>
+                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-right font-medium ${isDelivered ? 'text-ypText2' : 'text-white'}`}>
+                                                                    {row.miktar != null ? row.miktar : '-'}
+                                                                </td>
+                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-center text-sm font-semibold tracking-wide ${isDelivered ? 'text-ypText2' : 'text-ypText1'}`}>{termDate}</td>
+                                                                <td onClick={() => handleRowClick(row)} className="py-4 px-6 flex justify-center">
+                                                                    <div className={`px-3 py-1 rounded-full border flex items-center gap-2 text-xs font-medium ${status.color}`}>
+                                                                        <span className={`w-2 h-2 rounded-full ${status.dot} ${status.type === 'DANGER' && !isDelivered ? 'animate-pulse' : ''}`}></span>
+                                                                        {status.label}
+                                                                    </div>
+                                                                </td>
+                                                                <td className="py-4 px-6 text-right cursor-default">
+                                                                    <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-50 group-hover:opacity-100 transition-opacity">
+                                                                        {!isDelivered ? (
+                                                                            <button onClick={() => toggleStatus(row.id, row.status)} title="Teslim Edildi İşaretle" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-emerald-400 hover:bg-emerald-400/10 transition-colors">
+                                                                                <IcoCheck />
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button onClick={() => toggleStatus(row.id, row.status)} title="Geri Al" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-amber-400 hover:bg-amber-400/10 transition-colors">
+                                                                                <IcoUndo />
+                                                                            </button>
+                                                                        )}
+                                                                        <button onClick={() => deleteTermin(row.id)} title="Sil" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-red-400 hover:bg-red-400/10 transition-colors">
+                                                                            <IcoTrash />
+                                                                        </button>
+                                                                    </div>
+                                                                </td>
+                                                            </tr>
+                                                        );
+                                                    })
+                                                ) : (
+                                                    <tr>
+                                                        <td colSpan="7" className="py-12 text-center text-ypText2">
+                                                            Aradığınız kriterlere uygun kayıt bulunamadı.
+                                                        </td>
+                                                    </tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </main>
+
+                    {/* MODAL: Yeni Termin Ekle */}
+                    {isModalOpen && <AddModal onClose={() => setIsModalOpen(false)} onSave={handleAddTermin} />}
+
+                </div>
+            );
+        }
+
+        // --- BİLEŞENLER ---
+
+        function StatCard({ title, value, icon, color, danger }) {
+            return (
+                <div className={`bg-ypCard border ${danger ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-ypBorder'} rounded-2xl p-5 flex items-center gap-4 transition-transform hover:scale-[1.02]`}>
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>
+                        {icon}
+                    </div>
+                    <div className="overflow-hidden">
+                        <p className="text-ypText2 text-sm font-medium truncate">{title}</p>
+                        <p className="text-2xl font-bold text-white mt-1 truncate">{value}</p>
+                    </div>
+                </div>
+            );
+        }
+
+        function FilterBtn({ label, active, onClick, className = '' }) {
+            return (
+                <button 
+                    onClick={onClick}
+                    className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${active ? 'bg-ypCard text-white shadow-sm' : 'text-ypText2 hover:text-white ' + className}`}
+                >
+                    {label}
+                </button>
+            );
+        }
+
+        function AddModal({ onClose, onSave }) {
+            // Varsayılan olarak bugünün tarihini YYYY-MM-DD formatında al
+            const todayStr = new Date().toISOString().split('T')[0];
+            const [formData, setFormData] = React.useState({ cari: '', malzeme: '', miktar: '', termin: '', siparisTarihi: todayStr });
+
+            const handleSubmit = (e) => {
+                e.preventDefault();
+                onSave(formData);
+            };
+
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
+                    <div className="bg-ypCard border border-ypBorder rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out]">
+                        <div className="p-5 border-b border-ypBorder flex justify-between items-center">
+                            <h2 className="text-lg font-semibold text-white flex items-center gap-2"><IcoPlus /> Yeni Termin Ekle</h2>
+                            <button onClick={onClose} className="text-ypText2 hover:text-white transition-colors">✕</button>
+                        </div>
+                        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="col-span-2 sm:col-span-1">
+                                    <label className="block text-sm font-medium text-ypText2 mb-1">Cari Unvan</label>
+                                    <input required type="text" value={formData.cari} onChange={e => setFormData({...formData, cari: e.target.value})} 
+                                        className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" 
+                                        placeholder="Örn: Yılkar Tekstil" />
+                                </div>
+                                <div className="col-span-2 sm:col-span-1">
+                                    <label className="block text-sm font-medium text-ypText2 mb-1">Sipariş Tarihi</label>
+                                    <input required type="date" value={formData.siparisTarihi} onChange={e => setFormData({...formData, siparisTarihi: e.target.value})} 
+                                        className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal [color-scheme:dark]" />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-ypText2 mb-1">Malzeme Açıklama</label>
+                                <input required type="text" value={formData.malzeme} onChange={e => setFormData({...formData, malzeme: e.target.value})} 
+                                    className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" 
+                                    placeholder="Örn: YAN 1183 EKRU" />
+                            </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-sm font-medium text-ypText2 mb-1">
+                                        Miktar <span className="text-xs opacity-70 font-normal">(Opsiyonel)</span>
+                                    </label>
+                                    <input type="number" min="0" value={formData.miktar} onChange={e => setFormData({...formData, miktar: e.target.value})} 
+                                        className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" 
+                                        placeholder="0" />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-medium text-ypText2 mb-1">
+                                        Termin Tarihi <span className="text-xs opacity-70 font-normal">(Opsiyonel)</span>
+                                    </label>
+                                    <input type="date" value={formData.termin} onChange={e => setFormData({...formData, termin: e.target.value})} 
+                                        className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal [color-scheme:dark]" />
+                                </div>
+                            </div>
+                            <div className="flex justify-end gap-3 mt-4">
+                                <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-ypText2 hover:text-white transition-colors">İptal</button>
+                                <button type="submit" className="px-4 py-2 text-sm font-semibold bg-ypTeal text-ypDark rounded-lg hover:bg-ypTealLight transition-colors">Kaydet</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
