@@ -3,382 +3,594 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>E-Ticaret Tema Önizlemesi</title>
-    <!-- Tailwind CSS (Görselleştirme için) -->
+    <title>Nurederm - Medikal Estetik Tasarım Klonu</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            red: '#e52629', // Butonlar ve aktif tablar için kırmızı
+                            lightred: '#f79f9f',
+                            dark: '#0f0f0f',
+                            gray: '#f5f5f5',
+                            text: '#333333'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .group:hover .group-hover\:block { display: block; }
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
+        body { color: #333; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body class="bg-white text-gray-800 flex flex-col min-h-screen">
+<body class="bg-white">
 
-    <!-- ============================================== -->
-    <!-- HEADER (header.twig & navigation-menu.twig)    -->
-    <!-- ============================================== -->
-    <header id="header" class="relative z-50">
-        
-        <!-- Header Top -->
-        <div class="bg-gray-900 text-gray-300 text-xs py-2 hidden lg:block">
-            <div class="container mx-auto px-4 flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                    <span>Tüm alışverişlerde ücretsiz kargo fırsatı!</span>
-                </div>
-                <div class="flex space-x-6 items-center">
-                    <a href="tel:08501234567" class="flex items-center space-x-2 hover:text-white transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
-                            <path d="M15.4167 7.49998C15.4167 6.99998 15.025 6.23331 14.4417 5.60831C13.9083 5.03331 13.2 4.58331 12.5 4.58331" stroke="currentColor" stroke-linecap="round"/>
-                            <path d="M18.3333 7.50002C18.3333 4.27502 15.725 1.66669 12.5 1.66669" stroke="currentColor" stroke-linecap="round"/>
-                            <path d="M18.3084 15.275C18.3084 15.575 18.2417 15.8834 18.1001 16.1834C17.9584 16.4834 17.7751 16.7667 17.5334 17.0334C17.1251 17.4834 16.6751 17.8084 16.1667 18.0167C15.6667 18.225 15.1251 18.3334 14.5417 18.3334C13.6917 18.3334 12.7834 18.1334 11.8251 17.725C10.8667 17.3167 9.90842 16.7667 8.95842 16.075C8.00008 15.375 7.09175 14.6 6.22508 13.7417C5.36675 12.875 4.59175 11.9667 3.90008 11.0167C3.21675 10.0667 2.66675 9.11669 2.26675 8.17502C1.86675 7.22502 1.66675 6.31669 1.66675 5.45002C1.66675 4.88335 1.76675 4.34169 1.96675 3.84169C2.16675 3.33335 2.48341 2.86669 2.92508 2.45002C3.45841 1.92502 4.04175 1.66669 4.65841 1.66669C4.89175 1.66669 5.12508 1.71669 5.33341 1.81669C5.55008 1.91669 5.74175 2.06669 5.89175 2.28335L7.82508 5.00835C7.97508 5.21669 8.08341 5.40835 8.15841 5.59169C8.23341 5.76669 8.27508 5.94169 8.27508 6.10002C8.27508 6.30002 8.21675 6.50002 8.10008 6.69169C7.99175 6.88335 7.83341 7.08335 7.63341 7.28335L7.00008 7.94169C6.90841 8.03335 6.86675 8.14169 6.86675 8.27502C6.86675 8.34169 6.87508 8.40002 6.89175 8.46669C6.91675 8.53335 6.94175 8.58335 6.95842 8.63335C7.10842 8.90835 7.36675 9.26669 7.73341 9.70002C8.10841 10.1334 8.50841 10.575 8.94175 11.0167C9.39175 11.4584 9.82508 11.8667 10.2667 12.2417C10.7001 12.6084 11.0584 12.8584 11.3417 13.0084C11.3834 13.025 11.4334 13.05 11.4917 13.075C11.5584 13.1 11.6251 13.1084 11.7001 13.1084C11.8417 13.1084 11.9501 13.0584 12.0417 12.9667L12.6751 12.3417C12.8834 12.1334 13.0834 11.975 13.2751 11.875C13.4667 11.7584 13.6584 11.7 13.8667 11.7C14.0251 11.7 14.1917 11.7334 14.3751 11.8084C14.5584 11.8834 14.7501 11.9917 14.9584 12.1334L17.7167 14.0917C17.9334 14.2417 18.0834 14.4167 18.1751 14.625C18.2584 14.8334 18.3084 15.0417 18.3084 15.275Z" stroke="currentColor"/>
-                        </svg>
-                        <span>0850 123 45 67</span>
-                    </a>
-                    <a href="#" class="flex items-center space-x-2 hover:text-white transition-colors">
-                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M9.99988 11.6667H10.8332C11.7499 11.6667 12.4999 10.9167 12.4999 10V1.66669H4.99988C3.74988 1.66669 2.65822 2.35834 2.09155 3.37501" stroke="currentColor" stroke-linecap="round"/><path d="M1.66675 14.1667C1.66675 15.55 2.78341 16.6667 4.16675 16.6667H5.00008C5.00008 15.75 5.75008 15 6.66675 15C7.58341 15 8.33341 15.75 8.33341 16.6667H11.6667C11.6667 15.75 12.4167 15 13.3334 15C14.2501 15 15.0001 15.75 15.0001 16.6667H15.8334C17.2167 16.6667 18.3334 15.55 18.3334 14.1667V11.6667H15.8334C15.3751 11.6667 15.0001 11.2917 15.0001 10.8334V8.33335C15.0001 7.87502 15.3751 7.50002 15.8334 7.50002H16.9084L15.4834 5.00836C15.1834 4.4917 14.6334 4.16669 14.0334 4.16669H12.5001V10C12.5001 10.9167 11.7501 11.6667 10.8334 11.6667H10.0001" stroke="currentColor" stroke-linecap="round"/></svg>
-                        <span>Kargo Takibi</span>
-                    </a>
-                </div>
+    <div class="bg-gray-100 py-2 text-[11px] text-gray-600 font-medium">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                <span>Nurederm Kampanyaları İçin Tıklayın!</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#" class="hover:text-brand-red">0850 XXX XX XX</a>
+                <a href="#" class="hover:text-brand-red">Sipariş Takibi</a>
+                <a href="#" class="hover:text-brand-red">İade ve Değişim Şartları</a>
             </div>
         </div>
+    </div>
 
-        <!-- Header Middle -->
-        <div class="py-5 border-b border-gray-100 bg-white shadow-sm">
-            <div class="container mx-auto px-4 flex flex-wrap lg:flex-nowrap items-center justify-between gap-6">
+    <header class="py-5 bg-white sticky top-0 z-50 shadow-sm">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="flex flex-wrap md:flex-nowrap items-center justify-between gap-4 lg:gap-8">
                 
                 <!-- Logo -->
-                <div class="w-1/2 lg:w-1/5 order-1">
-                    <a href="#" class="block">
-                        <img src="https://placehold.co/240x60/ffffff/111827?text=MARKANIZ" alt="Logo" class="h-10 lg:h-12 object-contain">
+                <div class="w-40 flex-shrink-0">
+                    <a href="#" class="flex items-center space-x-2">
+                        <!-- Logo Placeholder -->
+                        <div class="text-2xl font-bold tracking-tighter text-gray-800 flex items-center">
+                            <span class="text-brand-red mr-1"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></span>
+                            nurederm<span class="text-[10px] uppercase align-top ml-1 text-gray-400 font-normal">®</span>
+                        </div>
                     </a>
                 </div>
 
                 <!-- Search -->
-                <div class="w-full lg:w-2/5 order-3 lg:order-2">
-                    <form class="relative group">
-                        <input type="text" placeholder="Aramak istediğiniz ürünü yazın..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
-                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
-                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <div class="flex-grow max-w-2xl hidden md:block">
+                    <div class="relative flex w-full">
+                        <input type="text" placeholder="Aramak istediğiniz ürünü yazın..." class="w-full border border-gray-300 rounded-l-full px-6 py-2.5 text-sm focus:outline-none focus:border-gray-400">
+                        <button class="bg-brand-red text-white px-6 rounded-r-full flex items-center justify-center hover:bg-red-700 transition">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                         </button>
-                    </form>
+                    </div>
                 </div>
 
-                <!-- Icons / Right Menu -->
-                <div class="w-1/2 lg:w-auto order-2 lg:order-3 flex justify-end items-center space-x-6 lg:space-x-8">
-                    
-                    <!-- User Menu -->
-                    <div class="group relative">
-                        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors">
-                            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                                <path d="M17.3115 16.9643C18.8573 16.9645 20.3409 17.5783 21.434 18.6712C22.5271 19.7644 23.1422 21.2478 23.1424 22.7937V25.2883C23.1424 25.7528 22.765 26.1294 22.3006 26.13C21.8357 26.13 21.4589 25.7531 21.4589 25.2883V22.7937C21.4588 21.6944 21.0217 20.6397 20.2445 19.8622C19.467 19.0848 18.411 18.648 17.3115 18.6478H9.82937C8.72999 18.648 7.67533 19.0849 6.89788 19.8622C6.1204 20.6397 5.68362 21.6942 5.68349 22.7937V25.2883C5.68349 25.753 5.30637 26.1297 4.84174 26.13C4.37686 26.13 4 25.7531 4 25.2883V22.7937C4.00013 21.2477 4.61367 19.7644 5.70687 18.6712C6.80004 17.5782 8.2835 16.9645 9.82937 16.9643H17.3115Z" fill="currentColor"/>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5705 2C16.7898 2.0003 19.401 4.61004 19.4013 7.82937C19.4013 11.0489 16.7899 13.6599 13.5705 13.6602C10.3509 13.6599 7.74109 11.0489 7.74109 7.82937C7.74135 4.61002 10.3511 2.00026 13.5705 2ZM13.5705 3.68349C11.2809 3.68375 9.42484 5.53978 9.42457 7.82937C9.42457 10.1192 11.2807 11.9765 13.5705 11.9767C15.8602 11.9764 17.7178 10.1192 17.7178 7.82937C17.7175 5.5398 15.86 3.68378 13.5705 3.68349Z" fill="currentColor"/>
-                            </svg>
-                            <span class="text-[11px] font-medium mt-1 hidden lg:block">Giriş Yap</span>
-                        </a>
-                        <!-- Mock Dropdown from User Menu Logic -->
-                        <div class="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-100 shadow-xl rounded-xl p-5 hidden group-hover:block transition-all transform origin-top-right">
-                            <div class="mb-4">
-                                <h4 class="font-semibold text-gray-800">Üye Girişi</h4>
-                                <p class="text-xs text-gray-500 mt-1">Fırsatlardan yararlanmak için giriş yapın.</p>
-                            </div>
-                            <input type="text" placeholder="E-Posta Adresi" class="w-full text-sm border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500">
-                            <input type="password" placeholder="Şifre" class="w-full text-sm border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500">
-                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2 text-sm font-semibold transition-colors">Giriş Yap</button>
-                            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs">
-                                <a href="#" class="text-blue-600 hover:underline">Şifremi Unuttum</a>
-                                <a href="#" class="font-semibold text-gray-800 hover:text-blue-600">Üye Ol</a>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Favorites -->
-                    <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors relative hidden lg:flex">
-                        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.4183 5.08031L13.7 5.80974L12.9815 5.0802C11.6716 3.74945 9.88239 3.00006 8.01509 3.00006C6.14779 3.00006 4.35861 3.74945 3.04869 5.0802V5.0802C0.317105 7.88726 0.317105 12.3589 3.04869 15.1659L10.6583 22.8927C11.4606 23.7077 12.5564 24.1667 13.7 24.1667C14.8437 24.1667 15.9395 23.7077 16.7417 22.8927L24.3513 15.1661C27.0829 12.359 27.0829 7.8874 24.3513 5.08033V5.08033C23.0414 3.74953 21.2522 3.00011 19.3848 3.00011C17.5175 3.0001 15.7283 3.74952 14.4183 5.08031Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span class="text-[11px] font-medium mt-1">Favorilerim</span>
-                        <span class="absolute -top-1.5 -right-2 bg-gray-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">1</span>
+                <!-- Icons -->
+                <div class="flex items-center space-x-4 lg:space-x-6 text-xs font-semibold">
+                    <a href="#" class="flex flex-col items-center text-gray-700 hover:text-brand-red">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                        Hesabım
                     </a>
-
-                    <!-- Cart -->
-                    <div class="group relative">
-                        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors relative">
-                            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
-                                <path d="M18.4349 10.9707C18.8743 10.9712 19.2314 11.328 19.2316 11.7675C19.2316 13.2308 18.6492 14.6349 17.6146 15.6698C16.5798 16.7044 15.1756 17.2853 13.7123 17.2855C12.2489 17.2853 10.8448 16.7046 9.80999 15.6698C8.77522 14.6349 8.19429 13.231 8.19429 11.7675C8.19457 11.3277 8.5512 10.9707 8.99107 10.9707C9.43071 10.971 9.78758 11.3278 9.78786 11.7675C9.78786 12.8083 10.2015 13.8063 10.9374 14.5424C11.6733 15.2783 12.6715 15.6918 13.7123 15.6919C14.753 15.6918 15.7526 15.2783 16.4886 14.5424C17.224 13.8064 17.6381 12.808 17.6381 11.7675C17.6384 11.3277 17.995 10.9707 18.4349 10.9707Z" fill="currentColor"/>
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M20.5375 2.00553C20.7525 2.03087 20.9495 2.14296 21.0811 2.31816L24.4107 6.75855C24.514 6.89636 24.5697 7.06356 24.5698 7.23579V22.773C24.5698 23.5728 24.2527 24.3404 23.6873 24.9061C23.1216 25.4717 22.3542 25.79 21.5542 25.79H6.01698C5.21697 25.79 4.44962 25.4718 3.88393 24.9061C3.31827 24.3404 3 23.573 3 22.773V7.23579C3.00001 7.20088 3.00377 7.16636 3.0083 7.13204C3.00526 7.10374 3 7.07539 3 7.04628C3 6.71282 3.20451 6.4264 3.49522 6.3076L6.48868 2.31816L6.54955 2.24761C6.69898 2.09066 6.90699 2 7.12639 2H20.4448L20.5375 2.00553ZM4.59356 22.773C4.59356 23.1504 4.74313 23.5132 5.00994 23.7801C5.27678 24.0469 5.63961 24.1964 6.01698 24.1964H21.5542C21.9314 24.1964 22.2931 24.0467 22.5599 23.7801C22.8267 23.5132 22.9762 23.1504 22.9762 22.773V7.84306H4.59356V22.773ZM5.53282 6.2495H22.0384L20.0464 3.59356H7.52478L5.53282 6.2495Z" fill="currentColor"/>
-                            </svg>
-                            <span class="text-[11px] font-medium mt-1 hidden lg:block">Sepetim</span>
-                            <span class="absolute -top-1.5 -right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">3</span>
-                        </a>
-                    </div>
-
-                    <!-- Mobile Menu Trigger -->
-                    <button class="lg:hidden text-gray-800 flex items-center justify-center p-2 rounded-md hover:bg-gray-100">
-                        <svg width="24" height="24" viewBox="0 0 28 28" fill="none"><path d="M23 6H5C4.44771 6 4 6.44772 4 7C4 7.55228 4.44771 8 5 8H23C23.5523 8 24 7.55228 24 7C24 6.44772 23.5523 6 23 6Z" fill="currentColor"/><path d="M23 13H5C4.44771 13 4 13.4477 4 14C4 14.5523 4.44771 15 5 15H23C23.5523 15 24 14.5523 24 14C24 13.4477 23.5523 13 23 13Z" fill="currentColor"/><path d="M23 20H5C4.44771 20 4 20.4477 4 21C4 21.5523 4.44771 22 5 22H23C23.5523 22 24 21.5523 24 21C24 20.4477 23.5523 20 23 20Z" fill="currentColor"/></svg>
-                    </button>
+                    <a href="#" class="flex flex-col items-center text-gray-700 hover:text-brand-red">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        Favoriler
+                    </a>
+                    <a href="#" class="flex flex-col items-center text-gray-700 hover:text-brand-red relative">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                        Sepetim
+                        <span class="absolute -top-1 -right-2 bg-brand-red text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center">0</span>
+                    </a>
+                    <a href="#" class="hidden lg:flex flex-col items-center text-gray-700 hover:text-brand-red">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="mb-1"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                        Giriş / Üye Ol
+                    </a>
                 </div>
             </div>
         </div>
 
-        <!-- Navigation Bottom -->
-        <nav class="hidden lg:block bg-white shadow-[0_4px_10px_rgba(0,0,0,0.03)] border-b border-gray-100">
-            <div class="container mx-auto px-4">
-                <ul class="flex items-center space-x-10">
-                    
-                    <!-- Dropdown Item -->
-                    <li class="group py-4">
-                        <a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 flex items-center transition-colors">
-                            KADIN
-                            <svg class="w-3 h-3 ml-1.5 text-gray-400 group-hover:-rotate-180 transition-transform duration-300" viewBox="0 0 9 10" fill="none">
-                                <path d="M8 3.59113L4.66489 6.92593C4.64325 6.9476 4.61754 6.96479 4.58925 6.97652C4.56096 6.98826 4.53063 6.99429 4.5 6.99429C4.46937 6.99429 4.43904 6.98826 4.41075 6.97652C4.38246 6.96479 4.35675 6.9476 4.33511 6.92593L1 3.59113" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </a>
-                        <!-- Mega Menu Mock -->
-                        <div class="absolute left-0 top-full w-full bg-white border-t border-gray-100 shadow-xl hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300 z-50">
-                            <div class="container mx-auto px-4 py-8">
-                                <div class="grid grid-cols-4 gap-8">
-                                    <div>
-                                        <h4 class="font-bold text-gray-900 mb-4 border-b pb-2">Giyim</h4>
-                                        <ul class="space-y-2 text-sm text-gray-600">
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Elbise</a></li>
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Tişört</a></li>
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Gömlek</a></li>
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Pantolon</a></li>
-                                        </ul>
-                                    </div>
-                                    <div>
-                                        <h4 class="font-bold text-gray-900 mb-4 border-b pb-2">Dış Giyim</h4>
-                                        <ul class="space-y-2 text-sm text-gray-600">
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Mont & Kaban</a></li>
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Ceket</a></li>
-                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Yelek</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="col-span-2">
-                                        <img src="https://placehold.co/600x250/f1f5f9/475569?text=Yeni+Sezon+Koleksiyonu" class="w-full h-full object-cover rounded-xl" alt="Banner">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-
-                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">ERKEK</a></li>
-                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">ÇOCUK</a></li>
-                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">EV & YAŞAM</a></li>
-                    <li class="py-4"><a href="#" class="font-semibold text-sm text-red-600 hover:text-red-700 transition-colors flex items-center">İNDİRİM %</a></li>
+        <div class="mt-4 border-t border-gray-100 pt-3 hidden md:block">
+            <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+                <ul class="flex items-center justify-center space-x-8 text-[13px] font-bold text-gray-800">
+                    <li><a href="#" class="hover:text-brand-red transition">YENİLER</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">DERMO KOZMETİK</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">ENJEKSİYON</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">SARF MALZEME</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">MEZOTERAPİ</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">DOLGU</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">İPLER</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">CİHAZLAR & DİĞER</a></li>
+                    <li><a href="#" class="hover:text-brand-red transition">LOKAL ANESTEZİKLER</a></li>
                 </ul>
             </div>
-        </nav>
+        </div>
     </header>
 
-    <!-- ============================================== -->
-    <!-- MAIN CONTENT (default.twig > block content)    -->
-    <!-- ============================================== -->
-    <main id="main" class="flex-grow bg-[#F9FAFB] py-10 relative z-10">
-        <div class="container mx-auto px-4">
-            
-            <!-- Breadcrumb (Mock) -->
-            <nav class="flex text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
-                <ol class="inline-flex items-center space-x-1 md:space-x-3">
-                    <li class="inline-flex items-center">
-                        <a href="#" class="hover:text-blue-600 transition-colors">Anasayfa</a>
-                    </li>
-                    <li>
-                        <div class="flex items-center">
-                            <span class="mx-2">/</span>
-                            <span class="text-gray-800 font-medium">Önizleme Sayfası</span>
-                        </div>
-                    </li>
-                </ol>
-            </nav>
-
-            <!-- İçerik Alanı Simülasyonu -->
-            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
-                <div class="max-w-2xl mx-auto">
-                    <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
-                        </svg>
-                    </div>
-                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">Twig Şablonlarınız Yüklendi!</h1>
-                    <p class="text-gray-500 text-lg leading-relaxed mb-8">
-                        Burası <code>default.twig</code> içindeki <strong>&#123;% block content %&#125;</strong> alanıdır. Gönderdiğiniz dosyaların iskelet yapısına uygun, modern Tailwind sınıfları kullanılarak bir araya getirilmiştir. <br><br> Bu yapı üzerinde hangi işlemi yapmamı istersiniz?
-                    </p>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="p-6 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-md transition-all cursor-pointer text-left">
-                            <h3 class="font-bold text-gray-800 mb-2">CSS / Tasarım Güncelleme</h3>
-                            <p class="text-sm text-gray-500">Mevcut stilleri Tailwind veya özel CSS yazarak güncelleyebilirim.</p>
-                        </div>
-                        <div class="p-6 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-md transition-all cursor-pointer text-left">
-                            <h3 class="font-bold text-gray-800 mb-2">Twig Kodlarına Müdahale</h3>
-                            <p class="text-sm text-gray-500">Mantıksal döngüleri, değişkenleri veya makroları onarabilirim.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Mock Product Showcase -->
-            <div class="mt-16">
-                <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
-                    <h2 class="text-2xl font-bold text-gray-900">Çok Satanlar</h2>
-                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">Tümünü Gör &rarr;</a>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    <!-- Ürün Kartı -->
-                    <div class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <div class="relative aspect-[4/5] bg-gray-100">
-                            <img src="https://placehold.co/400x500/f8fafc/94a3b8?text=Urun+Resmi" class="w-full h-full object-cover" alt="Product">
-                            <div class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 hover:text-red-500 cursor-pointer transition-colors">
-                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-                            </div>
-                        </div>
-                        <div class="p-4">
-                            <div class="text-xs text-gray-400 mb-1">Kategori</div>
-                            <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">Örnek Ürün Adı Burada Yer Alacak</h3>
-                            <div class="flex items-center justify-between mt-4">
-                                <div class="font-bold text-lg">₺299,90</div>
-                                <button class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Ürün Kartı Kopyaları -->
-                    <div class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
-                        <div class="relative aspect-[4/5] bg-gray-100">
-                            <span class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded">%20 İNDİRİM</span>
-                            <img src="https://placehold.co/400x500/f8fafc/94a3b8?text=Urun+Resmi" class="w-full h-full object-cover" alt="Product">
-                        </div>
-                        <div class="p-4">
-                            <div class="text-xs text-gray-400 mb-1">Kategori</div>
-                            <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">Premium Pamuklu Tişört Basic Model</h3>
-                            <div class="flex items-center justify-between mt-4">
-                                <div>
-                                    <span class="text-xs text-gray-400 line-through">₺199,90</span>
-                                    <div class="font-bold text-lg text-red-600">₺159,90</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+    <section class="relative w-full h-[300px] md:h-[450px] lg:h-[550px] bg-gray-100 overflow-hidden">
+        <!-- Arkaplan Görseli Simülasyonu (Estetik/Kozmetik Temalı) -->
+        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=2000&auto=format&fit=crop');">
+            <!-- Beyaz geçiş efekti -->
+            <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
         </div>
-    </main>
-
-    <!-- ============================================== -->
-    <!-- FOOTER (footer.twig)                           -->
-    <!-- ============================================== -->
-    <footer id="footer" class="bg-[#111827] text-white pt-16">
         
-        <div class="container mx-auto px-4">
-            <!-- Row 1 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-12 mb-12">
-                
-                <!-- Col 1: Logo & Contact -->
-                <div class="space-y-6">
-                    <img src="https://placehold.co/200x50/111827/ffffff?text=LOGO+WHITE" alt="Logo" class="h-10">
-                    <p class="text-gray-400 text-sm leading-relaxed">
-                        En kaliteli ürünleri en uygun fiyatlarla kapınıza getiriyoruz. Güvenli alışverişin adresi.
-                    </p>
-                    <div class="space-y-4">
-                        <a href="tel:08501234567" class="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors group">
-                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-                                    <path d="M28 20.0003V14.667C28 8.03958 22.6274 2.66699 16 2.66699V2.66699C9.37258 2.66699 4 8.03958 4 14.667V20.0003" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    <rect x="4" y="13.333" width="5.33333" height="9.33333" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    <rect x="22.6667" y="13.333" width="5.33333" height="9.33333" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    <rect x="12.6667" y="25.333" width="6.66667" height="4" rx="1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                    <path d="M12.6667 27.3337H10.6667C8.45761 27.3337 6.66675 25.5428 6.66675 23.3337V22.667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Müşteri Hizmetleri</div>
-                                <div class="font-semibold text-sm">0850 123 45 67</div>
-                            </div>
-                        </a>
-                        <a href="mailto:info@site.com" class="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors group">
-                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
-                                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
-                                    <path d="M22.6667 27.3337H9.33341C5.33341 27.3337 2.66675 25.3337 2.66675 20.667V11.3337C2.66675 6.66699 5.33341 4.66699 9.33341 4.66699H22.6667C26.6667 4.66699 29.3334 6.66699 29.3334 11.3337V20.667C29.3334 25.3337 26.6667 27.3337 22.6667 27.3337Z" stroke="currentColor" stroke-width="1.5"/>
-                                    <path d="M22.6666 12L18.4932 15.3333C17.1199 16.4267 14.8666 16.4267 13.4932 15.3333L9.33325 12" stroke="currentColor" stroke-width="1.5"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Bize Ulaşın</div>
-                                <div class="font-semibold text-sm">info@siteniz.com</div>
-                            </div>
-                        </a>
-                    </div>
+        <div class="container relative mx-auto px-4 xl:px-0 max-w-7xl h-full flex flex-col justify-center">
+            <div class="max-w-xl">
+                <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-4 tracking-tight">
+                    Global Medikal <br>Estetik Markaları
+                </h1>
+                <p class="text-sm md:text-base text-gray-600 mb-8">
+                    Hekimlere özel profesyonel ürün portföyü ve klinik çözümler
+                </p>
+                <div class="flex flex-wrap gap-3">
+                    <a href="#" class="bg-black text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-gray-800 transition">Ürünleri İncele</a>
+                    <a href="#" class="bg-brand-red text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-red-700 transition">Fırsatlar</a>
+                    <a href="#" class="bg-brand-lightred text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-red-400 transition">Kongre Fırsatları</a>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Slider Dots -->
+        <div class="absolute bottom-6 left-0 right-0 flex justify-center space-x-2">
+            <div class="w-2 h-2 rounded-full bg-black"></div>
+            <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+            <div class="w-2 h-2 rounded-full bg-gray-400"></div>
+        </div>
+    </section>
 
-                <!-- Col 2: Kurumsal -->
-                <div>
-                    <h3 class="font-bold text-lg mb-6 relative inline-block">
-                        Kurumsal
-                        <span class="absolute bottom--2 left-0 w-1/2 h-0.5 bg-blue-600"></span>
-                    </h3>
-                    <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Hakkımızda</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Kariyer</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Gizlilik Sözleşmesi</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Mesafeli Satış Sözleşmesi</a></li>
-                    </ul>
-                </div>
+    <section class="py-16">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <h2 class="text-2xl font-bold text-center mb-8 uppercase tracking-wide">Endikasyona Yönelik Tedaviler</h2>
+            
+            <!-- Tabs -->
+            <div class="flex overflow-x-auto hide-scrollbar justify-start md:justify-center gap-2 mb-10 pb-2">
+                <button class="whitespace-nowrap bg-brand-red text-white px-5 py-2 rounded-full text-sm font-semibold shadow-md">Kırışıklık & Lifting</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Nem & Cilt Kalitesi</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Leke & Işıltı</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Akne & Skar</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Yüz & Dudak Kontürleme</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Göz Çevresi</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Vücut</button>
+                <button class="whitespace-nowrap border border-gray-200 text-gray-600 hover:border-gray-300 px-5 py-2 rounded-full text-sm font-semibold transition">Saç Tedavisi</button>
+            </div>
 
-                <!-- Col 3: Müşteri -->
-                <div>
-                    <h3 class="font-bold text-lg mb-6 relative inline-block">
-                        Yardım & Destek
-                        <span class="absolute bottom--2 left-0 w-1/2 h-0.5 bg-blue-600"></span>
-                    </h3>
-                    <ul class="space-y-3 text-sm text-gray-400">
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Sıkça Sorulan Sorular</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Kargo ve Teslimat</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">İade ve Değişim</a></li>
-                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">İletişim</a></li>
-                    </ul>
-                </div>
-
-                <!-- Col 4: Bülten -->
-                <div>
-                    <h3 class="font-bold text-lg mb-6">E-Bülten Kayıt</h3>
-                    <p class="text-sm text-gray-400 mb-4 leading-relaxed">Kampanyalardan ve yeni ürünlerden anında haberdar olmak için bültenimize abone olun.</p>
-                    <form class="flex flex-col space-y-3">
-                        <input type="email" placeholder="E-Posta Adresiniz" class="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors">
-                        <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg px-4 py-3 transition-colors">
-                            Abone Ol
-                        </button>
-                    </form>
+            <div class="relative">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
                     
-                    <!-- Sosyal Medya İkonları (footer.twig makroları) -->
-                    <div class="flex space-x-4 mt-8">
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 3H16.504C18.987 3 21 5.013 21 7.496V16.505C21 18.987 18.987 21 16.504 21H7.496C5.013 21 3 18.987 3 16.504V7.5C3 5.015 5.015 3 7.5 3V3Z" stroke="currentColor" stroke-linecap="round"/><path d="M11.0996 12.9004H16.4996" stroke="currentColor" stroke-linecap="round"/><path d="M16.5004 8.40039H15.5554C14.0894 8.40039 12.9004 9.58939 12.9004 11.0554V12.0004V21.0004" stroke="currentColor" stroke-linecap="round"/></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.496 3H16.505C18.987 3 21 5.012 21 7.496V16.505C21 18.987 18.988 21 16.504 21H7.496C5.013 21 3 18.988 3 16.504V7.496C3 5.013 5.012 3 7.496 3V3Z" stroke="currentColor" stroke-linecap="round"/><path d="M16.9487 6.71328C16.7627 6.71428 16.6117 6.86528 16.6117 7.05128C16.6117 7.23728 16.7637 7.38828 16.9497 7.38828" stroke="currentColor" stroke-linecap="round"/><path d="M14.546 9.45481C15.9519 10.8607 15.9519 13.1401 14.546 14.546C13.1401 15.9519 10.8607 15.9519 9.45481 14.546C8.04892 13.1401 8.04892 10.8607 9.45481 9.45481C10.8607 8.04892 13.1401 8.04892 14.546 9.45481" stroke="currentColor" stroke-linecap="round"/></svg></a>
-                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.102 3.88379H8.812L13.005 9.88079L18.04 3.88379H19.545L13.58 10.7038L20 19.8838H15.29L10.911 13.6218L5.504 19.8838H4L10.337 12.8008L4.102 3.88379ZM5.96 4.82479L15.832 18.9428H18.142L8.27 4.82379L5.96 4.82479Z"/></svg></a>
+                    <!-- Kart 1 -->
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-white relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square bg-gray-50 flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <!-- Placeholder Ürün Görseli -->
+                            <img src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?q=80&w=400&auto=format&fit=crop" class="object-contain w-full h-full mix-blend-multiply" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">JUVÉDERM®</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">Juvéderm® VOLUMA® with Lidocaine</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">3.600,00 TL</div>
+                        </div>
+                    </div>
+
+                    <!-- Kart 2 -->
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#eef7fa] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg">
+                            <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400&auto=format&fit=crop" class="object-cover w-full h-full mix-blend-multiply rounded" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">ELLANSÉ</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">Ellansé M (2 x 1 ml)</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">5.000,00 TL</div>
+                        </div>
+                    </div>
+
+                    <!-- Kart 3 -->
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f4f7ed] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <div class="absolute bottom-2 right-2 bg-black text-white text-[9px] px-2 py-0.5 rounded uppercase font-bold">1 ALANA 1 BEDAVA</div>
+                            <img src="https://images.unsplash.com/photo-1556228578-0d85b1a4d571?q=80&w=400&auto=format&fit=crop" class="object-cover w-full h-full mix-blend-multiply rounded" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">CALHYDRA</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">Calhydra %2.5</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">3.200,00 TL</div>
+                        </div>
+                    </div>
+
+                    <!-- Kart 4 -->
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#faf5f5] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                             <div class="absolute bottom-2 right-2 bg-black text-white text-[9px] px-2 py-0.5 rounded uppercase font-bold">%20 İNDİRİM</div>
+                            <img src="https://images.unsplash.com/photo-1629198728070-82d2f704fb85?q=80&w=400&auto=format&fit=crop" class="object-cover w-full h-full mix-blend-multiply rounded" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">CALHYDRA</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">Calhydra Touch</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">2.200,00 TL</div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- Slider Okları -->
+                <button class="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
             </div>
         </div>
+    </section>
 
-        <!-- Copyright Bottom -->
-        <div class="border-t border-gray-800 bg-[#0B0F19] py-6">
-            <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
-                <div class="flex items-center space-x-2 mb-4 md:mb-0">
-                    <svg width="24" height="24" viewBox="0 0 24 30" fill="currentColor"><path d="M9.81843 0.00012353C8.09944 -0.0104621 6.44612 0.659671 5.21962 1.86414C3.99312 3.0686 3.29313 4.70951 3.27255 6.4284V10.7135C2.84452 10.7019 2.41854 10.7767 2.02005 10.9334C1.62156 11.0901 1.25876 11.3255 0.953304 11.6256C0.647852 11.9257 0.406022 12.2842 0.242265 12.6799C0.0785087 13.0755 -0.00381455 13.5001 0.000214091 13.9283V20.3565C-0.00831839 21.6309 0.238273 22.8941 0.725461 24.0716C1.21265 25.2492 1.93058 26.3174 2.83696 27.2132C4.70779 29.023 7.21562 30.0239 9.81843 29.9996C12.0302 30.0166 14.1826 29.2847 15.9256 27.923C17.6686 26.5613 18.8996 24.6499 19.4183 22.4997H19.6367C20.208 22.5164 20.7763 22.4103 21.3031 22.1886C21.8299 21.9669 22.3031 21.6347 22.6906 21.2145C23.0985 20.8276 23.4246 20.3627 23.6495 19.8473C23.8743 19.332 23.9935 18.7768 23.9998 18.2146C24.0042 17.6507 23.8899 17.0922 23.6643 16.5753C23.4388 16.0585 23.107 15.5949 22.6906 15.2146C21.8661 14.4241 20.7783 13.9663 19.6367 13.9295C19.6407 13.5013 19.5584 13.0767 19.3946 12.6811C19.2308 12.2854 18.989 11.9269 18.6836 11.6268C18.3781 11.3267 18.0153 11.0913 17.6168 10.9346C17.2183 10.7779 16.7923 10.7031 16.3643 10.7147V6.4284C16.3437 4.70951 15.6437 3.0686 14.4172 1.86414C13.1907 0.659671 11.5374 -0.0104621 9.81843 0.00012353ZM21.1642 16.7146C21.3707 16.9061 21.5354 17.1382 21.648 17.3963C21.7606 17.6544 21.8188 17.933 21.8188 18.2146C21.8188 18.4962 21.7606 18.7748 21.648 19.0329C21.5354 19.291 21.3707 19.523 21.1642 19.7146C20.8585 19.9897 20.4882 20.1831 20.0877 20.2767C19.6871 20.3703 19.2694 20.361 18.8735 20.2497C18.5314 20.1293 18.2259 19.9232 17.9861 19.6511C17.7463 19.379 17.5803 19.05 17.5037 18.6955C17.4272 18.341 17.4428 17.9728 17.5489 17.626C17.6551 17.2793 17.8484 16.9655 18.1103 16.7146C18.3589 16.4751 18.6565 16.2925 18.9827 16.1794C19.189 16.0922 19.4133 16.0556 19.6367 16.0726C20.2102 16.0768 20.7589 16.3076 21.163 16.7146H21.1642ZM17.4551 13.9295V14.5727C17.1456 14.7605 16.8536 14.9757 16.5827 15.2158C16.0178 15.7219 15.6346 16.3993 15.4919 17.1442H5.45411C5.30992 17.1342 5.16525 17.1548 5.02964 17.2049C4.89404 17.2549 4.77061 17.3332 4.6675 17.4345C4.56439 17.5357 4.48396 17.6578 4.43153 17.7925C4.37909 17.9272 4.35585 18.0714 4.36333 18.2158V20.3589C4.35585 20.5033 4.37909 20.6476 4.43153 20.7823C4.48396 20.917 4.56439 21.039 4.6675 21.1403C4.77061 21.2416 4.89404 21.3198 5.02964 21.3699C5.16525 21.4199 5.30992 21.4406 5.45411 21.4305C5.5983 21.4406 5.74298 21.4199 5.87858 21.3699C6.01418 21.3198 6.13762 21.2416 6.24073 21.1403C6.34383 21.039 6.42426 20.917 6.4767 20.7823C6.52913 20.6476 6.55238 20.5033 6.54489 20.3589V19.2874H8.72645V20.3589C8.72645 20.6482 8.84137 20.9257 9.04593 21.1302C9.25049 21.3348 9.52794 21.4497 9.81723 21.4497C10.1065 21.4497 10.384 21.3348 10.5885 21.1302C10.7931 20.9257 10.908 20.6482 10.908 20.3589V19.2874H15.3803C15.7007 20.3241 16.3519 21.2274 17.2343 21.8589C16.8909 23.5668 15.9617 25.1011 14.6072 26.1967C13.2527 27.2922 11.558 27.8801 9.81603 27.8588C7.79117 27.8666 5.83996 27.0999 4.36213 25.7156C3.66018 25.013 3.10563 24.1772 2.73101 23.2574C2.35639 22.3375 2.16925 21.3521 2.18057 20.3589V13.9283C2.17309 13.7839 2.19634 13.6396 2.24877 13.5049C2.3012 13.3702 2.38163 13.2482 2.48474 13.1469C2.58785 13.0456 2.71128 12.9674 2.84688 12.9174C2.98249 12.8673 3.12716 12.8466 3.27135 12.8567H16.3631C16.5073 12.8466 16.652 12.8673 16.7876 12.9174C16.9232 12.9674 17.0466 13.0456 17.1497 13.1469C17.2528 13.2482 17.3333 13.3702 17.3857 13.5049C17.4381 13.6396 17.4614 13.7839 17.4539 13.9283L17.4551 13.9295Z"/></svg>
-                    <span>&copy; 2026 E-Ticaret A.Ş. Tüm hakları saklıdır.</span>
+    <section class="py-10 bg-white">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <h2 class="text-2xl font-bold text-center mb-10 uppercase tracking-wide">Ayın Fırsatları</h2>
+            
+            <div class="relative">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+                    <!-- Fırsat Kartı (SUNGSHIN Örneği) -->
+                    <!-- SUNGSHIN Kartları için Döngü Simülasyonu -->
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f8f9fb] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-2 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/f8f9fb/aaaaaa?text=Enjektor" class="object-contain w-full h-full mix-blend-multiply" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">SUNGSHIN</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow">SUNGSHIN 32G/4mm - 100 Adet</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">1.200,00 TL</div>
+                        </div>
+                    </div>
+                    
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f8f9fb] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-2 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/f8f9fb/aaaaaa?text=Enjektor" class="object-contain w-full h-full mix-blend-multiply" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">SUNGSHIN</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow">SUNGSHIN 30G/13mm - 100 Adet</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">900,00 TL</div>
+                        </div>
+                    </div>
+
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-white relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-2 rounded-lg relative border-b-2 border-black">
+                             <img src="https://placehold.co/300x300/ffffff/aaaaaa?text=Enjektor" class="object-contain w-full h-full mix-blend-multiply" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col pt-2 border-t border-black">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">SUNGSHIN</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow">SUNGSHIN 30G/25mm - 100 Adet</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">900,00 TL</div>
+                        </div>
+                    </div>
+
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-white relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-2 rounded-lg relative border-b-2 border-black">
+                            <img src="https://placehold.co/300x300/ffffff/aaaaaa?text=Enjektor" class="object-contain w-full h-full mix-blend-multiply" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col pt-2 border-t border-black">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">SUNGSHIN</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow">SUNGSHIN 34G/4mm - 100 Adet</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto">640,00 TL</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex space-x-4">
-                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=SSL" alt="SSL" class="h-6 rounded">
-                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=Visa" alt="Visa" class="h-6 rounded">
-                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=MC" alt="MasterCard" class="h-6 rounded">
+
+                 <!-- Slider Okları -->
+                 <button class="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-sm">
+                <!-- Sol Siyah Alan -->
+                <div class="bg-black text-white p-12 md:p-16 w-full md:w-1/2 flex flex-col justify-center items-start">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                        Dünya Çapında 1 Numaralı Tıbbi Estetik Cilt Bakım Markası
+                    </h2>
+                    <a href="#" class="bg-white text-black px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-200 transition">Hemen Keşfet</a>
+                </div>
+                <!-- Sağ Görsel Alanı -->
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover aspect-[4/3] md:aspect-auto" alt="Kozmetik Ürün">
                 </div>
             </div>
         </div>
-    </footer>
+    </section>
+
+    <section class="py-16 bg-[#f9f9f9]">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <!-- Sol Metin -->
+                <div class="w-full lg:w-1/3">
+                    <h2 class="text-3xl md:text-4xl font-bold leading-tight mb-8">
+                        Klinikte uygulanan bakımlarınızı evde kullanabileceğiniz ürünlerle tamamlayın.
+                    </h2>
+                    <a href="#" class="bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition inline-block">Hemen Keşfet</a>
+                </div>
+                
+                <!-- Sağ Görseller (Slider) -->
+                <div class="w-full lg:w-2/3 relative">
+                    <div class="grid grid-cols-3 gap-4 lg:gap-6">
+                        <div class="text-center">
+                            <h3 class="font-bold mb-3">Klinik</h3>
+                            <div class="aspect-square rounded-xl overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Klinik">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-bold mb-3">Ev</h3>
+                            <div class="aspect-square rounded-xl overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover" alt="Ev">
+                            </div>
+                        </div>
+                        <div class="text-center">
+                            <h3 class="font-bold mb-3">Cihazlar</h3>
+                            <div class="aspect-square rounded-xl overflow-hidden">
+                                <img src="https://images.unsplash.com/photo-1512496015851-a1c8ba111b70?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover grayscale" alt="Cihazlar">
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Slider Okları -->
+                    <button class="absolute top-[60%] -left-6 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 hidden md:flex items-center justify-center text-gray-400 hover:text-black">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <button class="absolute top-[60%] -right-6 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 hidden md:flex items-center justify-center text-gray-400 hover:text-black">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </button>
+                    <div class="flex justify-center mt-6 space-x-2">
+                        <div class="w-2 h-2 rounded-full bg-black"></div>
+                        <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                        <div class="w-2 h-2 rounded-full bg-gray-300"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <h2 class="text-2xl md:text-3xl font-bold text-center mb-12 tracking-wide">Gelişmiş Cilt Bakım Hizmetlerini Keşfedin</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Kart 1 -->
+                <div class="flex flex-col">
+                    <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover" alt="Detaylı Bilgi">
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Bilgi Al</div>
+                    <h3 class="text-lg font-bold mb-6">Ürünlerle İlgili Detaylı Bilgi</h3>
+                    <div class="mt-auto">
+                        <a href="#" class="bg-black text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition inline-block">Hemen Keşfet</a>
+                    </div>
+                </div>
+                
+                <!-- Kart 2 -->
+                <div class="flex flex-col">
+                    <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-6 shadow-sm">
+                        <img src="https://images.unsplash.com/photo-1550005971-8bc68705a6ff?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover grayscale" alt="Protokol">
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Detaylı Analiz</div>
+                    <h3 class="text-lg font-bold mb-6">Protokol İnceleme</h3>
+                    <div class="mt-auto">
+                        <a href="#" class="bg-black text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition inline-block">Hemen Keşfet</a>
+                    </div>
+                </div>
+
+                <!-- Kart 3 -->
+                <div class="flex flex-col">
+                    <div class="aspect-[4/3] rounded-2xl overflow-hidden mb-6 shadow-sm bg-black flex items-center justify-center">
+                        <img src="https://images.unsplash.com/photo-1590439471364-192aa70c0b53?q=80&w=600&auto=format&fit=crop" class="w-full h-full object-cover mix-blend-luminosity opacity-80" alt="Kongre">
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1 uppercase tracking-wider">Size Uygun Öneriler</div>
+                    <h3 class="text-lg font-bold mb-6">Kongre Fırsatları</h3>
+                    <div class="mt-auto">
+                        <a href="#" class="bg-black text-white px-6 py-2.5 rounded-full text-xs font-bold hover:bg-gray-800 transition inline-block">Hemen Keşfet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-6">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="flex flex-col md:flex-row rounded-2xl overflow-hidden bg-[#faf9f8] shadow-sm">
+                <!-- Sol Metin Alanı -->
+                <div class="p-12 md:p-16 w-full md:w-1/2 flex flex-col justify-center items-start">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">
+                        Ürünlerle İlgili Detaylı Bilgi Al
+                    </h2>
+                    <a href="#" class="bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition">Hemen Keşfet</a>
+                </div>
+                <!-- Sağ Görsel Alanı -->
+                <div class="w-full md:w-1/2">
+                    <img src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover aspect-[4/3] md:aspect-auto" alt="Kozmetik Ürün">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <h2 class="text-xl md:text-2xl font-bold text-center mb-10 uppercase tracking-wide">Öne Çıkan Kategoriler</h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <!-- Kategori Kutusu -->
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition transform -rotate-45">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">Dermal<br>Dolgular</span>
+                </a>
+                
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/><path d="M2 12h20"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">Dermo Kozmetik<br>Ürünleri</span>
+                </a>
+
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition">
+                        <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">İğnesiz Cilt<br>Tedavileri</span>
+                </a>
+
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">Donanım<br>&nbsp;</span>
+                </a>
+
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition">
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">Mezoterapi<br>&nbsp;</span>
+                </a>
+
+                <a href="#" class="flex flex-col items-center justify-center p-6 bg-[#f8f9fb] rounded-2xl hover:bg-gray-100 transition group">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-4 text-gray-800 group-hover:text-brand-red transition">
+                        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                    </svg>
+                    <span class="text-xs font-bold text-center">Cilt Bakım<br>Ürünleri</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-6">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="flex flex-col md:flex-row rounded-2xl overflow-hidden shadow-sm bg-[#efece8]">
+                <!-- Sol Metin Alanı -->
+                <div class="p-12 md:p-16 w-full md:w-1/2 flex flex-col justify-center items-start">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-8 leading-tight">
+                        Temsilcinizle Birebir Görüşün
+                    </h2>
+                    <a href="#" class="bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition">İletişime Geç</a>
+                </div>
+                <!-- Sağ Görsel Alanı -->
+                <div class="w-full md:w-1/2 relative overflow-hidden">
+                     <img src="https://images.unsplash.com/photo-1608222351212-18fe0ec7b13b?q=80&w=1000&auto=format&fit=crop" class="w-full h-full object-cover aspect-[4/3] md:aspect-auto mix-blend-multiply opacity-80" alt="Birebir Görüşme">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <!-- Tabs -->
+            <div class="flex justify-center space-x-6 mb-10">
+                <button class="text-sm font-bold border-b-2 border-black pb-1 uppercase tracking-wide">Yeni Gelenler</button>
+                <button class="text-sm font-bold text-gray-400 hover:text-black pb-1 uppercase tracking-wide transition">İndirimdekiler</button>
+            </div>
+
+            <!-- Urun Grid (STYLAGE Örneği) -->
+            <div class="relative">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6">
+                    
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f8f9fb] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/182a45/ffffff?text=STYLAGE" class="object-contain w-full h-full shadow-md" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">STYLAGE®</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">STYLAGE HYDROMAX (Bi-SOFT)</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto"><span class="line-through text-gray-400 font-normal mr-2">3.000,00 TL</span>2.620,00 TL</div>
+                        </div>
+                    </div>
+
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f0f4f8] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/182a45/ffffff?text=STYLAGE" class="object-contain w-full h-full shadow-md" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">STYLAGE®</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">STYLAGE HYDROMAX DUAL</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto"><span class="line-through text-gray-400 font-normal mr-2">5.400,00 TL</span>4.480,00 TL</div>
+                        </div>
+                    </div>
+
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f6f5fa] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/8b62a6/ffffff?text=STYLAGE" class="object-contain w-full h-full shadow-md" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">STYLAGE®</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">STYLAGE M LIDO 2*1ML</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto"><span class="line-through text-gray-400 font-normal mr-2">6.800,00 TL</span>6.020,00 TL</div>
+                        </div>
+                    </div>
+
+                    <div class="group border border-gray-100 rounded-xl overflow-hidden hover:shadow-lg transition bg-[#f6f5fa] relative p-4 flex flex-col h-full">
+                        <button class="absolute top-3 right-3 z-10 text-gray-300 hover:text-brand-red bg-white/80 rounded-full p-1"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg></button>
+                        <div class="aspect-square flex items-center justify-center mb-4 p-4 rounded-lg relative">
+                            <img src="https://placehold.co/300x300/8b62a6/ffffff?text=STYLAGE" class="object-contain w-full h-full shadow-md" alt="Ürün">
+                        </div>
+                        <div class="flex-grow flex flex-col">
+                            <div class="text-[11px] font-bold text-gray-800 uppercase tracking-wider mb-1">STYLAGE®</div>
+                            <h3 class="text-xs text-gray-600 mb-3 flex-grow line-clamp-2">STYLAGE L LIDO BI-SOFT 2*1ML</h3>
+                            <div class="text-sm font-bold text-gray-900 mt-auto"><span class="line-through text-gray-400 font-normal mr-2">10.000,00 TL</span>7.000,00 TL</div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Slider Okları -->
+                <button class="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="absolute top-1/2 -right-4 transform -translate-y-1/2 bg-white border border-gray-200 shadow-sm rounded-full w-8 h-8 flex items-center justify-center text-gray-400 hover:text-black">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-10 pb-20">
+        <div class="container mx-auto px-4 xl:px-0 max-w-7xl">
+            <div class="relative w-full h-[400px] md:h-[500px] rounded-2xl overflow-hidden shadow-lg bg-gray-100">
+                <!-- Serum Görseli (Büyük Damlalıklı Şişe) -->
+                <div class="absolute inset-0 bg-cover bg-right md:bg-center" style="background-image: url('https://images.unsplash.com/photo-1629198688000-71f23e745b6e?q=80&w=2000&auto=format&fit=crop');">
+                    <!-- Siyah geçiş efekti -->
+                    <div class="absolute inset-0 bg-gradient-to-r from-white via-white/80 to-transparent"></div>
+                </div>
+                
+                <div class="absolute inset-0 flex flex-col justify-end md:justify-center p-10 md:p-16">
+                    <div class="max-w-md">
+                        <h2 class="text-3xl md:text-5xl font-bold mb-6 leading-tight text-gray-900">
+                            Dünya Çapında 1 Numaralı Tıbbi Estetik Cilt Bakım Markası
+                        </h2>
+                        <a href="#" class="bg-black text-white px-8 py-3 rounded-full text-sm font-bold hover:bg-gray-800 transition inline-block">Hemen Keşfet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
 </body>
 </html>
