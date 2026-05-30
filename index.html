@@ -1,800 +1,384 @@
-```html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
-    <meta name="theme-color" content="#0F172A">
-    <title>Yanteks Pro | Termin Sistemi</title>
-    
-    <!-- React & ReactDOM -->
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
-    <!-- Babel -->
-    <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <!-- SheetJS (Excel) -->
-    <script src="https://unpkg.com/xlsx/dist/xlsx.full.min.js"></script>
-    
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Ticaret Tema Önizlemesi</title>
+    <!-- Tailwind CSS (Görselleştirme için) -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: { ypDark: '#0F172A', ypCard: '#1E293B', ypBorder: '#334155', ypTeal: '#0891B2', ypText1: '#F8FAFC', ypText2: '#94A3B8' },
-                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
-                }
-            }
-        }
-    </script>
-
-    <!-- FIREBASE KÜTÜPHANELERİ -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { background-color: #0F172A; color: #F8FAFC; margin: 0; font-family: 'Inter', system-ui, sans-serif; -webkit-font-smoothing: antialiased; }
-        ::-webkit-scrollbar { width: 8px; height: 8px; }
-        ::-webkit-scrollbar-track { background: #0F172A; }
-        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #475569; }
-        .glass-header { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid #334155; }
-        .modal-overlay { background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); }
-        .spinner { border: 3px solid rgba(255,255,255,0.1); border-left-color: #0891B2; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        body { font-family: 'Inter', sans-serif; }
+        .group:hover .group-hover\:block { display: block; }
+        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 300ms; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="bg-white text-gray-800 flex flex-col min-h-screen">
 
-    <script type="text/babel">
-        // ==========================================
-        // FIREBASE BAĞLANTISI (BİLGİLERİNİZ BURADA HAZIR)
-        // ==========================================
-        const MY_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyBnDLOhTQ5jWYzwUTOQxR6twT8UOmyWRt4",  // <-- LÜTFEN SADECE BURAYA API KEY'İNİZİ YAPIŞTIRIN
-            authDomain: "yanteks-termin-takip.firebaseapp.com",
-            projectId: "yanteks-termin-takip",
-            storageBucket: "yanteks-termin-takip.firebasestorage.app",
-            messagingSenderId: "567675662704",
-            appId: "1:567675662704:web:0b2405ed1a92e4cc3c8801"
-        };
-
-        const isCanvas = typeof __firebase_config !== 'undefined';
-        const firebaseConfig = isCanvas ? JSON.parse(__firebase_config) : MY_FIREBASE_CONFIG;
+    <!-- ============================================== -->
+    <!-- HEADER (header.twig & navigation-menu.twig)    -->
+    <!-- ============================================== -->
+    <header id="header" class="relative z-50">
         
-        let db = null;
-        let auth = null;
+        <!-- Header Top -->
+        <div class="bg-gray-900 text-gray-300 text-xs py-2 hidden lg:block">
+            <div class="container mx-auto px-4 flex justify-between items-center">
+                <div class="flex items-center space-x-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <span>Tüm alışverişlerde ücretsiz kargo fırsatı!</span>
+                </div>
+                <div class="flex space-x-6 items-center">
+                    <a href="tel:08501234567" class="flex items-center space-x-2 hover:text-white transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none">
+                            <path d="M15.4167 7.49998C15.4167 6.99998 15.025 6.23331 14.4417 5.60831C13.9083 5.03331 13.2 4.58331 12.5 4.58331" stroke="currentColor" stroke-linecap="round"/>
+                            <path d="M18.3333 7.50002C18.3333 4.27502 15.725 1.66669 12.5 1.66669" stroke="currentColor" stroke-linecap="round"/>
+                            <path d="M18.3084 15.275C18.3084 15.575 18.2417 15.8834 18.1001 16.1834C17.9584 16.4834 17.7751 16.7667 17.5334 17.0334C17.1251 17.4834 16.6751 17.8084 16.1667 18.0167C15.6667 18.225 15.1251 18.3334 14.5417 18.3334C13.6917 18.3334 12.7834 18.1334 11.8251 17.725C10.8667 17.3167 9.90842 16.7667 8.95842 16.075C8.00008 15.375 7.09175 14.6 6.22508 13.7417C5.36675 12.875 4.59175 11.9667 3.90008 11.0167C3.21675 10.0667 2.66675 9.11669 2.26675 8.17502C1.86675 7.22502 1.66675 6.31669 1.66675 5.45002C1.66675 4.88335 1.76675 4.34169 1.96675 3.84169C2.16675 3.33335 2.48341 2.86669 2.92508 2.45002C3.45841 1.92502 4.04175 1.66669 4.65841 1.66669C4.89175 1.66669 5.12508 1.71669 5.33341 1.81669C5.55008 1.91669 5.74175 2.06669 5.89175 2.28335L7.82508 5.00835C7.97508 5.21669 8.08341 5.40835 8.15841 5.59169C8.23341 5.76669 8.27508 5.94169 8.27508 6.10002C8.27508 6.30002 8.21675 6.50002 8.10008 6.69169C7.99175 6.88335 7.83341 7.08335 7.63341 7.28335L7.00008 7.94169C6.90841 8.03335 6.86675 8.14169 6.86675 8.27502C6.86675 8.34169 6.87508 8.40002 6.89175 8.46669C6.91675 8.53335 6.94175 8.58335 6.95842 8.63335C7.10842 8.90835 7.36675 9.26669 7.73341 9.70002C8.10841 10.1334 8.50841 10.575 8.94175 11.0167C9.39175 11.4584 9.82508 11.8667 10.2667 12.2417C10.7001 12.6084 11.0584 12.8584 11.3417 13.0084C11.3834 13.025 11.4334 13.05 11.4917 13.075C11.5584 13.1 11.6251 13.1084 11.7001 13.1084C11.8417 13.1084 11.9501 13.0584 12.0417 12.9667L12.6751 12.3417C12.8834 12.1334 13.0834 11.975 13.2751 11.875C13.4667 11.7584 13.6584 11.7 13.8667 11.7C14.0251 11.7 14.1917 11.7334 14.3751 11.8084C14.5584 11.8834 14.7501 11.9917 14.9584 12.1334L17.7167 14.0917C17.9334 14.2417 18.0834 14.4167 18.1751 14.625C18.2584 14.8334 18.3084 15.0417 18.3084 15.275Z" stroke="currentColor"/>
+                        </svg>
+                        <span>0850 123 45 67</span>
+                    </a>
+                    <a href="#" class="flex items-center space-x-2 hover:text-white transition-colors">
+                        <svg width="14" height="14" viewBox="0 0 20 20" fill="none"><path d="M9.99988 11.6667H10.8332C11.7499 11.6667 12.4999 10.9167 12.4999 10V1.66669H4.99988C3.74988 1.66669 2.65822 2.35834 2.09155 3.37501" stroke="currentColor" stroke-linecap="round"/><path d="M1.66675 14.1667C1.66675 15.55 2.78341 16.6667 4.16675 16.6667H5.00008C5.00008 15.75 5.75008 15 6.66675 15C7.58341 15 8.33341 15.75 8.33341 16.6667H11.6667C11.6667 15.75 12.4167 15 13.3334 15C14.2501 15 15.0001 15.75 15.0001 16.6667H15.8334C17.2167 16.6667 18.3334 15.55 18.3334 14.1667V11.6667H15.8334C15.3751 11.6667 15.0001 11.2917 15.0001 10.8334V8.33335C15.0001 7.87502 15.3751 7.50002 15.8334 7.50002H16.9084L15.4834 5.00836C15.1834 4.4917 14.6334 4.16669 14.0334 4.16669H12.5001V10C12.5001 10.9167 11.7501 11.6667 10.8334 11.6667H10.0001" stroke="currentColor" stroke-linecap="round"/></svg>
+                        <span>Kargo Takibi</span>
+                    </a>
+                </div>
+            </div>
+        </div>
 
-        try {
-            if (!firebase.apps.length) {
-                firebase.initializeApp(firebaseConfig);
-            }
-            auth = firebase.auth();
-            db = firebase.firestore();
-        } catch (e) {
-            console.error("Firebase başlatılamadı:", e);
-        }
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'yanteks-termin-app';
-
-        // --- İKONLAR ---
-        const IcoSearch = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>;
-        const IcoCalendar = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>;
-        const IcoAlert = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>;
-        const IcoCheck = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
-        const IcoPackage = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="16.5" y1="9.4" x2="7.5" y2="4.21"></line><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>;
-        const IcoPlus = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>;
-        const IcoTrash = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>;
-        const IcoUndo = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7v6h6"></path><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"></path></svg>;
-        const IcoDatabase = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>;
-        const IcoUpload = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>;
-        const IcoDownload = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>;
-        const IcoWhatsapp = () => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>;
-
-        function App() {
-            const [user, setUser] = React.useState(null);
-            const [terminData, setTerminData] = React.useState([]);
-            const [loading, setLoading] = React.useState(true);
-            const [authError, setAuthError] = React.useState(null);
-            
-            const [search, setSearch] = React.useState('');
-            const [filterStatus, setFilterStatus] = React.useState('PENDING_ALL');
-            
-            const [isModalOpen, setIsModalOpen] = React.useState(false);
-            const [isImporting, setIsImporting] = React.useState(false);
-            const [toast, setToast] = React.useState(null);
-            const fileInputRef = React.useRef(null);
-            
-            const [editingRowId, setEditingRowId] = React.useState(null);
-            const [editForm, setEditForm] = React.useState({});
-
-            React.useEffect(() => {
-                if (toast) {
-                    const timer = setTimeout(() => setToast(null), 3000);
-                    return () => clearTimeout(timer);
-                }
-            }, [toast]);
-
-            React.useEffect(() => {
-                const initAuth = async () => {
-                    if(!auth) {
-                        setAuthError("Firebase bağlantısı kurulamadı. API Key ayarlarını kontrol edin.");
-                        setLoading(false);
-                        return;
-                    }
-                    try {
-                        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                            await auth.signInWithCustomToken(__initial_auth_token);
-                        } else {
-                            await auth.signInAnonymously();
-                        }
-                    } catch (error) {
-                        console.error("Auth Error:", error);
-                        setAuthError("Yetkilendirme hatası: " + error.message);
-                        setLoading(false);
-                    }
-                };
+        <!-- Header Middle -->
+        <div class="py-5 border-b border-gray-100 bg-white shadow-sm">
+            <div class="container mx-auto px-4 flex flex-wrap lg:flex-nowrap items-center justify-between gap-6">
                 
-                initAuth();
-                
-                if(auth) {
-                    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
-                        setUser(currentUser);
-                    });
-                    return () => unsubscribe();
-                }
-            }, []);
+                <!-- Logo -->
+                <div class="w-1/2 lg:w-1/5 order-1">
+                    <a href="#" class="block">
+                        <img src="https://placehold.co/240x60/ffffff/111827?text=MARKANIZ" alt="Logo" class="h-10 lg:h-12 object-contain">
+                    </a>
+                </div>
 
-            React.useEffect(() => {
-                if (!user || !db) return;
-                
-                let colRef = isCanvas ? db.collection('artifacts').doc(appId).collection('public').doc('data').collection('terminler') : db.collection('terminler');
-                
-                const unsubscribe = colRef.onSnapshot((snapshot) => {
-                    const data = [];
-                    snapshot.forEach(doc => {
-                        data.push({ id: doc.id, ...doc.data() });
-                    });
-                    data.sort((a, b) => b.createdAt - a.createdAt);
-                    setTerminData(data);
-                    setLoading(false);
-                }, (error) => {
-                    console.error("Veri çekme hatası:", error);
-                    setAuthError("Veritabanından okuma yapılamadı. Güvenlik kurallarını (test mode) kontrol edin.");
-                    setLoading(false);
-                });
+                <!-- Search -->
+                <div class="w-full lg:w-2/5 order-3 lg:order-2">
+                    <form class="relative group">
+                        <input type="text" placeholder="Aramak istediğiniz ürünü yazın..." class="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-full pl-5 pr-12 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all">
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-blue-600">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                        </button>
+                    </form>
+                </div>
 
-                return () => unsubscribe();
-            }, [user]);
-
-            const getColRef = () => {
-                return isCanvas ? db.collection('artifacts').doc(appId).collection('public').doc('data').collection('terminler') : db.collection('terminler');
-            }
-            
-            const getDocRef = (id) => {
-                return isCanvas ? db.collection('artifacts').doc(appId).collection('public').doc('data').collection('terminler').doc(id) : db.collection('terminler').doc(id);
-            }
-
-            const handleAddTermin = async (formData) => {
-                if (!user || !db) return;
-                const colRef = getColRef();
-                
-                const dateObj = formData.siparisTarihi ? new Date(formData.siparisTarihi) : new Date();
-                const sipTarihiStr = dateObj.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                
-                try {
-                    await colRef.add({
-                        cari: formData.cari,
-                        malzeme: formData.malzeme,
-                        miktar: formData.miktar ? Number(formData.miktar) : null,
-                        termin: formData.termin || null,
-                        tarih: sipTarihiStr, 
-                        status: 'PENDING',
-                        createdAt: Date.now()
-                    });
-                    setIsModalOpen(false);
-                    setToast({ type: 'success', message: 'Termin başarıyla eklendi.' });
-                } catch(e) {
-                    setToast({ type: 'error', message: 'Hata: Kayıt eklenemedi.' });
-                }
-            };
-
-            const toggleStatus = async (id, currentStatus) => {
-                if (!user || !db) return;
-                const docRef = getDocRef(id);
-                const newStatus = currentStatus === 'PENDING' ? 'DELIVERED' : 'PENDING';
-                await docRef.update({ status: newStatus });
-            };
-
-            const deleteTermin = async (id) => {
-                if (!user || !db) return;
-                const docRef = getDocRef(id);
-                await docRef.delete();
-                setToast({ type: 'success', message: 'Kayıt silindi.' });
-            };
-
-            const loadSampleData = async () => {
-                if (!user || !db) return;
-                setLoading(true);
-                const colRef = getColRef();
-                
-                const today = new Date();
-                const format = (d) => d.toISOString().split('T')[0];
-                const addDays = (d, days) => { const nd = new Date(d); nd.setDate(nd.getDate() + days); return nd; };
-                const bugunStr = today.toLocaleDateString('tr-TR');
-
-                const samples = [
-                    { cari: "Tuvana Evteks", malzeme: "YAN 1183 EKRU", miktar: 150, termin: format(addDays(today, 2)), status: 'PENDING' },
-                    { cari: "Cac Tekstil", malzeme: "165/48 YAN TTM", miktar: 300, termin: format(addDays(today, 8)), status: 'PENDING' },
-                    { cari: "Yılkar Tekstil", malzeme: "YAN 1551 GÜMÜŞ", miktar: null, termin: format(addDays(today, 15)), status: 'PENDING' },
-                    { cari: "Sabırer Tekstil", malzeme: "YAN 1427 ALTIN", miktar: 400, termin: format(addDays(today, -1)), status: 'DELIVERED' },
-                ];
-
-                for (const item of samples) {
-                    await colRef.add({ ...item, tarih: bugunStr, createdAt: Date.now() });
-                }
-                setLoading(false);
-            };
-
-            const handleExcelImport = (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-
-                setIsImporting(true);
-                const reader = new FileReader();
-                
-                reader.onload = async (evt) => {
-                    try {
-                        const bstr = evt.target.result;
-                        const wb = XLSX.read(bstr, { type: 'binary' });
-                        const wsname = wb.SheetNames[0];
-                        const ws = wb.Sheets[wsname];
-                        const data = XLSX.utils.sheet_to_json(ws);
-
-                        let basariliKayit = 0;
-                        const colRef = getColRef();
-
-                        for (let i = 0; i < data.length; i++) {
-                            const row = data[i];
-                            
-                            const cari = row["Cari Unvan"] || row["Cari"] || row["Müşteri"] || "Bilinmiyor";
-                            const malzeme = row["Malzeme Aciklama"] || row["Malzeme Açıklama"] || row["Malzeme"] || "-";
-                            const miktarVal = row["Miktar"];
-                            const miktar = miktarVal != null ? Number(miktarVal) : null;
-                            
-                            let termin = row["TERMİN"] || row["Termin"] || row["Termin Tarihi"];
-                            if (typeof termin === 'number') {
-                                const date = new Date(Math.round((termin - 25569) * 86400 * 1000));
-                                termin = date.toISOString().split('T')[0];
-                            } else if (typeof termin === 'string') {
-                                if(termin.includes('.')) {
-                                    const parts = termin.split('.');
-                                    if(parts.length === 3) termin = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                                }
-                            } else {
-                                termin = null;
-                            }
-
-                            const sipTarihi = row["Siparis Tarihi"] || row["Sipariş Tarihi"] || new Date().toLocaleDateString('tr-TR');
-
-                            if (cari !== "Bilinmiyor") {
-                                await colRef.add({
-                                    cari: String(cari),
-                                    malzeme: String(malzeme),
-                                    miktar: miktar,
-                                    termin: termin,
-                                    tarih: sipTarihi,
-                                    status: 'PENDING',
-                                    createdAt: Date.now() + i 
-                                });
-                                basariliKayit++;
-                            }
-                        }
-
-                        setToast({ type: 'success', message: `${basariliKayit} sipariş başarıyla içe aktarıldı.` });
-                    } catch (error) {
-                        console.error("Excel okuma hatası:", error);
-                        setToast({ type: 'error', message: 'Dosya okunurken bir hata oluştu!' });
-                    } finally {
-                        setIsImporting(false);
-                        if (fileInputRef.current) fileInputRef.current.value = '';
-                    }
-                };
-                reader.readAsBinaryString(file);
-            };
-
-            const handleExcelExport = () => {
-                if (filteredData.length === 0) {
-                    setToast({ type: 'error', message: 'Dışarı aktarılacak veri bulunamadı!' });
-                    return;
-                }
-                
-                const exportData = filteredData.map(row => {
-                    const statusInfo = getStatusInfo(row.termin, row.status);
-                    return {
-                        "Cari Unvan": row.cari,
-                        "Sipariş Tarihi": row.tarih,
-                        "Malzeme Açıklama": row.malzeme,
-                        "Miktar": row.miktar != null ? row.miktar : "",
-                        "Termin Tarihi": row.termin ? new Date(row.termin).toLocaleDateString('tr-TR') : "Belirsiz",
-                        "Durum": statusInfo.label
-                    };
-                });
-
-                const ws = XLSX.utils.json_to_sheet(exportData);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Terminler");
-                XLSX.writeFile(wb, `Termin_Listesi_${new Date().toLocaleDateString('tr-TR')}.xlsx`);
-                setToast({ type: 'success', message: 'Liste Excel olarak indirildi.' });
-            };
-
-            const handleWhatsappShare = () => {
-                if (filteredData.length === 0) {
-                    setToast({ type: 'error', message: 'Paylaşılacak termin kaydı bulunmuyor.' });
-                    return;
-                }
-
-                const todayStr = new Date().toLocaleDateString('tr-TR');
-                let acilSayisi = 0;
-                let bekleyenToplam = 0;
-                
-                const aktifListe = filteredData.filter(item => item.status === 'PENDING');
-                
-                aktifListe.forEach(item => {
-                    bekleyenToplam += (item.miktar || 0);
-                    const st = getStatusInfo(item.termin, item.status).type;
-                    if (st === 'DANGER') acilSayisi++;
-                });
-
-                let message = `*YANTEKS PRO GÜNLÜK TERMİN ÖZETİ* 📅 (${todayStr})\n\n`;
-                message += `📦 *Bekleyen Toplam Sipariş:* ${aktifListe.length} Kalem\n`;
-                message += `⚖️ *Bekleyen Toplam Miktar:* ${bekleyenToplam.toLocaleString('tr-TR')} kg/mt\n`;
-                
-                if (acilSayisi > 0) {
-                    message += `🚨 *DİKKAT! Acil Terminler (< 3 Gün):* ${acilSayisi} Kalem\n`;
-                }
-
-                message += `\n*-- ÖNE ÇIKAN SİPARİŞLER --*\n`;
-                
-                const limit = Math.min(aktifListe.length, 10);
-                for (let i = 0; i < limit; i++) {
-                    const row = aktifListe[i];
-                    const termDateStr = row.termin ? new Date(row.termin).toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit' }) : 'Belirsiz';
-                    const miktarStr = row.miktar != null ? row.miktar : '-';
-                    const statusType = getStatusInfo(row.termin, row.status).type;
+                <!-- Icons / Right Menu -->
+                <div class="w-1/2 lg:w-auto order-2 lg:order-3 flex justify-end items-center space-x-6 lg:space-x-8">
                     
-                    let icon = '⏱️';
-                    if (statusType === 'DANGER') icon = '🔴';
-                    if (statusType === 'WARNING') icon = '🟠';
-                    
-                    message += `${icon} *${row.cari}* | ${row.malzeme} | Miktar: ${miktarStr} | Termin: ${termDateStr}\n`;
-                }
-
-                if (aktifListe.length > 10) {
-                    message += `\n_...ve ${aktifListe.length - 10} sipariş daha devam ediyor._\n`;
-                }
-                
-                message += `\n_Yanteks Pro Termin Sistemi üzerinden otomatik oluşturulmuştur._`;
-
-                const encodedMessage = encodeURIComponent(message);
-                const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-                window.open(whatsappUrl, '_blank');
-            };
-
-            const handleRowClick = (row) => {
-                if (row.status === 'DELIVERED') return; 
-                if (editingRowId === row.id) return;
-                
-                let sipTarihiForInput = "";
-                if (row.tarih) {
-                    const parts = row.tarih.split('.');
-                    if(parts.length === 3) sipTarihiForInput = `${parts[2]}-${parts[1]}-${parts[0]}`;
-                    else sipTarihiForInput = row.tarih;
-                }
-
-                setEditForm({
-                    ...row,
-                    siparisTarihi: sipTarihiForInput,
-                    miktar: row.miktar != null ? row.miktar : ''
-                });
-                setEditingRowId(row.id);
-            };
-
-            const handleSaveEdit = async (id) => {
-                if (!user || !db) return;
-                const docRef = getDocRef(id);
-                
-                let sipTarihiStr = editForm.tarih;
-                if (editForm.siparisTarihi) {
-                    const d = new Date(editForm.siparisTarihi);
-                    if (!isNaN(d.getTime())) {
-                        sipTarihiStr = d.toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric' });
-                    }
-                }
-
-                await docRef.update({
-                    cari: editForm.cari,
-                    malzeme: editForm.malzeme,
-                    miktar: editForm.miktar !== '' && editForm.miktar != null ? Number(editForm.miktar) : null,
-                    termin: editForm.termin || null,
-                    tarih: sipTarihiStr
-                });
-                
-                setEditingRowId(null);
-                setToast({ type: 'success', message: 'Sipariş güncellendi.' });
-            };
-
-            const TODAY = new Date();
-            TODAY.setHours(0,0,0,0);
-
-            const getStatusInfo = (terminDateStr, status) => {
-                if (status === 'DELIVERED') {
-                    return { type: 'DELIVERED', label: 'Teslim Edildi', color: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20', dot: 'bg-emerald-500' };
-                }
-
-                if (!terminDateStr) {
-                    return { type: 'UNKNOWN', label: 'Belirsiz', color: 'bg-slate-500/10 text-slate-400 border-slate-500/20', dot: 'bg-slate-500' };
-                }
-
-                const terminDate = new Date(terminDateStr);
-                const diffTime = terminDate - TODAY;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                if (diffDays <= 3) return { type: 'DANGER', label: 'Çok Acil', color: 'bg-red-500/10 text-red-400 border-red-500/20', dot: 'bg-red-500' };
-                else if (diffDays <= 10) return { type: 'WARNING', label: 'Yaklaşıyor', color: 'bg-amber-500/10 text-amber-400 border-amber-500/20', dot: 'bg-amber-500' };
-                else return { type: 'SAFE', label: 'Zamanı Var', color: 'bg-blue-500/10 text-blue-400 border-blue-500/20', dot: 'bg-blue-500' };
-            };
-
-            const filteredData = React.useMemo(() => {
-                return terminData.filter(item => {
-                    const matchesSearch = item.cari.toLowerCase().includes(search.toLowerCase()) || 
-                                          item.malzeme.toLowerCase().includes(search.toLowerCase());
-                    
-                    const calculatedStatus = getStatusInfo(item.termin, item.status).type;
-                    
-                    let matchesStatus = false;
-                    if (filterStatus === 'PENDING_ALL') matchesStatus = item.status === 'PENDING';
-                    else if (filterStatus === 'DELIVERED') matchesStatus = item.status === 'DELIVERED';
-                    else matchesStatus = calculatedStatus === filterStatus && item.status === 'PENDING';
-
-                    return matchesSearch && matchesStatus;
-                });
-            }, [terminData, search, filterStatus]);
-
-            const stats = React.useMemo(() => {
-                let pendingCount = 0;
-                let danger = 0;
-                let warning = 0;
-                let pendingAmount = 0;
-
-                terminData.forEach(item => {
-                    if (item.status === 'PENDING') {
-                        pendingCount++;
-                        pendingAmount += (item.miktar || 0); 
-                        const stType = getStatusInfo(item.termin, item.status).type;
-                        if (stType === 'DANGER') danger++;
-                        if (stType === 'WARNING') warning++;
-                    }
-                });
-
-                return { pendingCount, danger, warning, pendingAmount };
-            }, [terminData]);
-            
-            if (authError) {
-                return (
-                    <div className="min-h-screen flex items-center justify-center bg-ypDark p-6">
-                        <div className="bg-ypCard border border-ypBorder p-8 rounded-2xl max-w-2xl text-center shadow-2xl">
-                            <div className="w-16 h-16 bg-red-500/10 text-red-500 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <IcoAlert />
+                    <!-- User Menu -->
+                    <div class="group relative">
+                        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors">
+                            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                                <path d="M17.3115 16.9643C18.8573 16.9645 20.3409 17.5783 21.434 18.6712C22.5271 19.7644 23.1422 21.2478 23.1424 22.7937V25.2883C23.1424 25.7528 22.765 26.1294 22.3006 26.13C21.8357 26.13 21.4589 25.7531 21.4589 25.2883V22.7937C21.4588 21.6944 21.0217 20.6397 20.2445 19.8622C19.467 19.0848 18.411 18.648 17.3115 18.6478H9.82937C8.72999 18.648 7.67533 19.0849 6.89788 19.8622C6.1204 20.6397 5.68362 21.6942 5.68349 22.7937V25.2883C5.68349 25.753 5.30637 26.1297 4.84174 26.13C4.37686 26.13 4 25.7531 4 25.2883V22.7937C4.00013 21.2477 4.61367 19.7644 5.70687 18.6712C6.80004 17.5782 8.2835 16.9645 9.82937 16.9643H17.3115Z" fill="currentColor"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M13.5705 2C16.7898 2.0003 19.401 4.61004 19.4013 7.82937C19.4013 11.0489 16.7899 13.6599 13.5705 13.6602C10.3509 13.6599 7.74109 11.0489 7.74109 7.82937C7.74135 4.61002 10.3511 2.00026 13.5705 2ZM13.5705 3.68349C11.2809 3.68375 9.42484 5.53978 9.42457 7.82937C9.42457 10.1192 11.2807 11.9765 13.5705 11.9767C15.8602 11.9764 17.7178 10.1192 17.7178 7.82937C17.7175 5.5398 15.86 3.68378 13.5705 3.68349Z" fill="currentColor"/>
+                            </svg>
+                            <span class="text-[11px] font-medium mt-1 hidden lg:block">Giriş Yap</span>
+                        </a>
+                        <!-- Mock Dropdown from User Menu Logic -->
+                        <div class="absolute right-0 top-full mt-2 w-64 bg-white border border-gray-100 shadow-xl rounded-xl p-5 hidden group-hover:block transition-all transform origin-top-right">
+                            <div class="mb-4">
+                                <h4 class="font-semibold text-gray-800">Üye Girişi</h4>
+                                <p class="text-xs text-gray-500 mt-1">Fırsatlardan yararlanmak için giriş yapın.</p>
                             </div>
-                            <h2 className="text-2xl font-bold text-white mb-4">Bir Sorun Oluştu</h2>
-                            <p className="text-ypText2 mb-6 text-sm leading-relaxed">{authError}</p>
-                            <p className="text-ypText2 mb-6 text-xs bg-ypDark p-4 rounded text-left">
-                                - Lütfen API Anahtarınızın ("AIza..." ile başlayan) doğruluğunu kontrol edin.<br/>
-                                - Firebase panelinden 'Firestore Database' (Test Modunda) ve 'Authentication' (Anonymous) servislerini aktifleştirdiğinizden emin olun.
-                            </p>
+                            <input type="text" placeholder="E-Posta Adresi" class="w-full text-sm border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500">
+                            <input type="password" placeholder="Şifre" class="w-full text-sm border border-gray-300 rounded px-3 py-2 mb-3 focus:outline-none focus:border-blue-500">
+                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white rounded py-2 text-sm font-semibold transition-colors">Giriş Yap</button>
+                            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs">
+                                <a href="#" class="text-blue-600 hover:underline">Şifremi Unuttum</a>
+                                <a href="#" class="font-semibold text-gray-800 hover:text-blue-600">Üye Ol</a>
+                            </div>
                         </div>
                     </div>
-                )
-            }
 
-            if (loading) {
-                return (
-                    <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-                        <div className="spinner"></div>
-                        <p className="text-ypText2 animate-pulse">Sistem Bağlantısı Kuruluyor...</p>
+                    <!-- Favorites -->
+                    <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors relative hidden lg:flex">
+                        <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M14.4183 5.08031L13.7 5.80974L12.9815 5.0802C11.6716 3.74945 9.88239 3.00006 8.01509 3.00006C6.14779 3.00006 4.35861 3.74945 3.04869 5.0802V5.0802C0.317105 7.88726 0.317105 12.3589 3.04869 15.1659L10.6583 22.8927C11.4606 23.7077 12.5564 24.1667 13.7 24.1667C14.8437 24.1667 15.9395 23.7077 16.7417 22.8927L24.3513 15.1661C27.0829 12.359 27.0829 7.8874 24.3513 5.08033V5.08033C23.0414 3.74953 21.2522 3.00011 19.3848 3.00011C17.5175 3.0001 15.7283 3.74952 14.4183 5.08031Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <span class="text-[11px] font-medium mt-1">Favorilerim</span>
+                        <span class="absolute -top-1.5 -right-2 bg-gray-800 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">1</span>
+                    </a>
+
+                    <!-- Cart -->
+                    <div class="group relative">
+                        <a href="#" class="flex flex-col items-center text-gray-600 hover:text-blue-600 transition-colors relative">
+                            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+                                <path d="M18.4349 10.9707C18.8743 10.9712 19.2314 11.328 19.2316 11.7675C19.2316 13.2308 18.6492 14.6349 17.6146 15.6698C16.5798 16.7044 15.1756 17.2853 13.7123 17.2855C12.2489 17.2853 10.8448 16.7046 9.80999 15.6698C8.77522 14.6349 8.19429 13.231 8.19429 11.7675C8.19457 11.3277 8.5512 10.9707 8.99107 10.9707C9.43071 10.971 9.78758 11.3278 9.78786 11.7675C9.78786 12.8083 10.2015 13.8063 10.9374 14.5424C11.6733 15.2783 12.6715 15.6918 13.7123 15.6919C14.753 15.6918 15.7526 15.2783 16.4886 14.5424C17.224 13.8064 17.6381 12.808 17.6381 11.7675C17.6384 11.3277 17.995 10.9707 18.4349 10.9707Z" fill="currentColor"/>
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M20.5375 2.00553C20.7525 2.03087 20.9495 2.14296 21.0811 2.31816L24.4107 6.75855C24.514 6.89636 24.5697 7.06356 24.5698 7.23579V22.773C24.5698 23.5728 24.2527 24.3404 23.6873 24.9061C23.1216 25.4717 22.3542 25.79 21.5542 25.79H6.01698C5.21697 25.79 4.44962 25.4718 3.88393 24.9061C3.31827 24.3404 3 23.573 3 22.773V7.23579C3.00001 7.20088 3.00377 7.16636 3.0083 7.13204C3.00526 7.10374 3 7.07539 3 7.04628C3 6.71282 3.20451 6.4264 3.49522 6.3076L6.48868 2.31816L6.54955 2.24761C6.69898 2.09066 6.90699 2 7.12639 2H20.4448L20.5375 2.00553ZM4.59356 22.773C4.59356 23.1504 4.74313 23.5132 5.00994 23.7801C5.27678 24.0469 5.63961 24.1964 6.01698 24.1964H21.5542C21.9314 24.1964 22.2931 24.0467 22.5599 23.7801C22.8267 23.5132 22.9762 23.1504 22.9762 22.773V7.84306H4.59356V22.773ZM5.53282 6.2495H22.0384L20.0464 3.59356H7.52478L5.53282 6.2495Z" fill="currentColor"/>
+                            </svg>
+                            <span class="text-[11px] font-medium mt-1 hidden lg:block">Sepetim</span>
+                            <span class="absolute -top-1.5 -right-2 bg-blue-600 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">3</span>
+                        </a>
                     </div>
-                );
-            }
 
-            return (
-                <div className="min-h-screen pb-10">
-                    <header className="glass-header sticky top-0 z-10 px-6 py-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-ypTeal flex items-center justify-center shadow-lg shadow-ypTeal/20">
-                                <span className="text-xl font-bold text-white">Y</span>
-                            </div>
-                            <div>
-                                <h1 className="text-xl font-semibold tracking-tight text-ypText1">Yanteks Pro</h1>
-                                <p className="text-sm text-ypText2">Canlı Termin Sistemi</p>
-                            </div>
-                        </div>
+                    <!-- Mobile Menu Trigger -->
+                    <button class="lg:hidden text-gray-800 flex items-center justify-center p-2 rounded-md hover:bg-gray-100">
+                        <svg width="24" height="24" viewBox="0 0 28 28" fill="none"><path d="M23 6H5C4.44771 6 4 6.44772 4 7C4 7.55228 4.44771 8 5 8H23C23.5523 8 24 7.55228 24 7C24 6.44772 23.5523 6 23 6Z" fill="currentColor"/><path d="M23 13H5C4.44771 13 4 13.4477 4 14C4 14.5523 4.44771 15 5 15H23C23.5523 15 24 14.5523 24 14C24 13.4477 23.5523 13 23 13Z" fill="currentColor"/><path d="M23 20H5C4.44771 20 4 20.4477 4 21C4 21.5523 4.44771 22 5 22H23C23.5523 22 24 21.5523 24 21C24 20.4477 23.5523 20 23 20Z" fill="currentColor"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
 
-                        <div className="flex items-center gap-4 w-full md:w-auto">
-                            <div className="relative w-full md:w-64">
-                                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ypText2">
-                                    <IcoSearch />
-                                </span>
-                                <input 
-                                    type="text" 
-                                    placeholder="Cari veya Malzeme ara..." 
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    className="w-full bg-ypCard border border-ypBorder rounded-lg py-2 pl-10 pr-4 text-sm text-white placeholder-ypText2 focus:outline-none focus:border-ypTeal focus:ring-1 focus:ring-ypTeal transition-all"
-                                />
-                            </div>
-
-                            <input 
-                                type="file" 
-                                accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" 
-                                ref={fileInputRef}
-                                onChange={handleExcelImport}
-                                className="hidden" 
-                            />
-
-                            <button 
-                                onClick={handleWhatsappShare}
-                                className="flex items-center gap-2 bg-[#25D366]/10 border border-[#25D366]/30 hover:bg-[#25D366] text-[#25D366] hover:text-white font-semibold py-2 px-4 rounded-lg transition-all whitespace-nowrap"
-                                title="Günlük Özeti WhatsApp'ta Paylaş"
-                            >
-                                <IcoWhatsapp /> <span className="hidden sm:inline">Paylaş</span>
-                            </button>
-                            
-                            <button 
-                                onClick={() => fileInputRef.current?.click()}
-                                disabled={isImporting}
-                                className="hidden sm:flex items-center gap-2 bg-ypCard border border-ypBorder hover:border-ypTeal text-white font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
-                            >
-                                <IcoUpload /> İçe Aktar
-                            </button>
-
-                            <button 
-                                onClick={handleExcelExport}
-                                className="hidden sm:flex items-center gap-2 bg-ypCard border border-ypBorder hover:border-emerald-500 text-white font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
-                            >
-                                <IcoDownload /> Dışarı Aktar
-                            </button>
-
-                            <button 
-                                onClick={() => setIsModalOpen(true)}
-                                className="flex items-center gap-2 bg-ypTeal hover:bg-ypTealLight text-ypDark font-semibold py-2 px-4 rounded-lg transition-colors whitespace-nowrap"
-                            >
-                                <IcoPlus /> Yeni Termin
-                            </button>
-                        </div>
-                    </header>
-
-                    {toast && (
-                        <div className="fixed bottom-6 right-6 z-50 animate-[fadeIn_0.3s_ease-out]">
-                            <div className={`px-4 py-3 rounded-lg shadow-xl flex items-center gap-3 ${toast.type === 'success' ? 'bg-emerald-500 text-white' : 'bg-red-500 text-white'}`}>
-                                {toast.type === 'success' ? <IcoCheck /> : <IcoAlert />}
-                                <span className="font-medium text-sm">{toast.message}</span>
-                            </div>
-                        </div>
-                    )}
-
-                    {isImporting && (
-                        <div className="fixed inset-0 z-[60] flex items-center justify-center modal-overlay">
-                            <div className="bg-ypCard border border-ypBorder p-8 rounded-2xl flex flex-col items-center gap-4 shadow-2xl">
-                                <div className="spinner"></div>
-                                <h3 className="text-lg text-white font-medium">Veriler İçe Aktarılıyor...</h3>
-                                <p className="text-sm text-ypText2">Kayıt sayısına göre biraz sürebilir.</p>
-                            </div>
-                        </div>
-                    )}
-
-                    <main className="max-w-7xl mx-auto px-4 sm:px-6 mt-8">
-                        {terminData.length === 0 ? (
-                            <div className="bg-ypCard border border-dashed border-ypBorder rounded-2xl p-12 flex flex-col items-center justify-center text-center">
-                                <div className="w-16 h-16 rounded-full bg-ypDark flex items-center justify-center text-ypText2 mb-4">
-                                    <IcoDatabase />
+        <!-- Navigation Bottom -->
+        <nav class="hidden lg:block bg-white shadow-[0_4px_10px_rgba(0,0,0,0.03)] border-b border-gray-100">
+            <div class="container mx-auto px-4">
+                <ul class="flex items-center space-x-10">
+                    
+                    <!-- Dropdown Item -->
+                    <li class="group py-4">
+                        <a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 flex items-center transition-colors">
+                            KADIN
+                            <svg class="w-3 h-3 ml-1.5 text-gray-400 group-hover:-rotate-180 transition-transform duration-300" viewBox="0 0 9 10" fill="none">
+                                <path d="M8 3.59113L4.66489 6.92593C4.64325 6.9476 4.61754 6.96479 4.58925 6.97652C4.56096 6.98826 4.53063 6.99429 4.5 6.99429C4.46937 6.99429 4.43904 6.98826 4.41075 6.97652C4.38246 6.96479 4.35675 6.9476 4.33511 6.92593L1 3.59113" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                        <!-- Mega Menu Mock -->
+                        <div class="absolute left-0 top-full w-full bg-white border-t border-gray-100 shadow-xl hidden group-hover:block transition-all opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 duration-300 z-50">
+                            <div class="container mx-auto px-4 py-8">
+                                <div class="grid grid-cols-4 gap-8">
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-4 border-b pb-2">Giyim</h4>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Elbise</a></li>
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Tişört</a></li>
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Gömlek</a></li>
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Pantolon</a></li>
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-gray-900 mb-4 border-b pb-2">Dış Giyim</h4>
+                                        <ul class="space-y-2 text-sm text-gray-600">
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Mont & Kaban</a></li>
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Ceket</a></li>
+                                            <li><a href="#" class="hover:text-blue-600 hover:pl-1 transition-all">Yelek</a></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-span-2">
+                                        <img src="https://placehold.co/600x250/f1f5f9/475569?text=Yeni+Sezon+Koleksiyonu" class="w-full h-full object-cover rounded-xl" alt="Banner">
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-medium text-white mb-2">Henüz Hiç Kayıt Yok</h3>
-                                <p className="text-ypText2 max-w-md mb-6">Sisteme henüz hiç termin eklenmemiş. "Yeni Termin" butonu ile manuel ekleme yapabilir veya "İçe Aktar" ile Excel yükleyebilirsiniz.</p>
-                                <button onClick={loadSampleData} className="px-5 py-2.5 bg-ypBorder hover:bg-ypBorder/80 text-white rounded-lg transition-colors text-sm font-medium">
-                                    Test Verisi Yükle
+                            </div>
+                        </div>
+                    </li>
+
+                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">ERKEK</a></li>
+                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">ÇOCUK</a></li>
+                    <li class="py-4"><a href="#" class="font-semibold text-sm text-gray-800 hover:text-blue-600 transition-colors">EV & YAŞAM</a></li>
+                    <li class="py-4"><a href="#" class="font-semibold text-sm text-red-600 hover:text-red-700 transition-colors flex items-center">İNDİRİM %</a></li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+
+    <!-- ============================================== -->
+    <!-- MAIN CONTENT (default.twig > block content)    -->
+    <!-- ============================================== -->
+    <main id="main" class="flex-grow bg-[#F9FAFB] py-10 relative z-10">
+        <div class="container mx-auto px-4">
+            
+            <!-- Breadcrumb (Mock) -->
+            <nav class="flex text-xs text-gray-500 mb-6" aria-label="Breadcrumb">
+                <ol class="inline-flex items-center space-x-1 md:space-x-3">
+                    <li class="inline-flex items-center">
+                        <a href="#" class="hover:text-blue-600 transition-colors">Anasayfa</a>
+                    </li>
+                    <li>
+                        <div class="flex items-center">
+                            <span class="mx-2">/</span>
+                            <span class="text-gray-800 font-medium">Önizleme Sayfası</span>
+                        </div>
+                    </li>
+                </ol>
+            </nav>
+
+            <!-- İçerik Alanı Simülasyonu -->
+            <section class="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 md:p-12 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <div class="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4 tracking-tight">Twig Şablonlarınız Yüklendi!</h1>
+                    <p class="text-gray-500 text-lg leading-relaxed mb-8">
+                        Burası <code>default.twig</code> içindeki <strong>&#123;% block content %&#125;</strong> alanıdır. Gönderdiğiniz dosyaların iskelet yapısına uygun, modern Tailwind sınıfları kullanılarak bir araya getirilmiştir. <br><br> Bu yapı üzerinde hangi işlemi yapmamı istersiniz?
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-6 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-md transition-all cursor-pointer text-left">
+                            <h3 class="font-bold text-gray-800 mb-2">CSS / Tasarım Güncelleme</h3>
+                            <p class="text-sm text-gray-500">Mevcut stilleri Tailwind veya özel CSS yazarak güncelleyebilirim.</p>
+                        </div>
+                        <div class="p-6 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:shadow-md transition-all cursor-pointer text-left">
+                            <h3 class="font-bold text-gray-800 mb-2">Twig Kodlarına Müdahale</h3>
+                            <p class="text-sm text-gray-500">Mantıksal döngüleri, değişkenleri veya makroları onarabilirim.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Mock Product Showcase -->
+            <div class="mt-16">
+                <div class="flex justify-between items-end mb-8 border-b border-gray-200 pb-4">
+                    <h2 class="text-2xl font-bold text-gray-900">Çok Satanlar</h2>
+                    <a href="#" class="text-blue-600 hover:text-blue-800 font-medium text-sm">Tümünü Gör &rarr;</a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    <!-- Ürün Kartı -->
+                    <div class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                        <div class="relative aspect-[4/5] bg-gray-100">
+                            <img src="https://placehold.co/400x500/f8fafc/94a3b8?text=Urun+Resmi" class="w-full h-full object-cover" alt="Product">
+                            <div class="absolute top-3 right-3 w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm text-gray-400 hover:text-red-500 cursor-pointer transition-colors">
+                                <svg width="18" height="18" fill="currentColor" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <div class="text-xs text-gray-400 mb-1">Kategori</div>
+                            <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">Örnek Ürün Adı Burada Yer Alacak</h3>
+                            <div class="flex items-center justify-between mt-4">
+                                <div class="font-bold text-lg">₺299,90</div>
+                                <button class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
                                 </button>
                             </div>
-                        ) : (
-                            <>
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                                    <StatCard title="Bekleyen Kalem" value={stats.pendingCount} icon={<IcoPackage />} color="bg-blue-500/10 text-blue-400" />
-                                    <StatCard title="Bekleyen Miktar" value={`${stats.pendingAmount.toLocaleString('tr-TR')} kg/mt`} icon={<IcoCheck />} color="bg-teal-500/10 text-teal-400" />
-                                    <StatCard title="Acil (< 3 Gün)" value={stats.danger} icon={<IcoAlert />} color="bg-red-500/10 text-red-400" danger={stats.danger > 0} />
-                                    <StatCard title="Yaklaşan" value={stats.warning} icon={<IcoCalendar />} color="bg-amber-500/10 text-amber-400" />
+                        </div>
+                    </div>
+                    <!-- Ürün Kartı Kopyaları -->
+                    <div class="group bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
+                        <div class="relative aspect-[4/5] bg-gray-100">
+                            <span class="absolute top-3 left-3 bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded">%20 İNDİRİM</span>
+                            <img src="https://placehold.co/400x500/f8fafc/94a3b8?text=Urun+Resmi" class="w-full h-full object-cover" alt="Product">
+                        </div>
+                        <div class="p-4">
+                            <div class="text-xs text-gray-400 mb-1">Kategori</div>
+                            <h3 class="font-medium text-gray-800 text-sm mb-2 line-clamp-2">Premium Pamuklu Tişört Basic Model</h3>
+                            <div class="flex items-center justify-between mt-4">
+                                <div>
+                                    <span class="text-xs text-gray-400 line-through">₺199,90</span>
+                                    <div class="font-bold text-lg text-red-600">₺159,90</div>
                                 </div>
-
-                                <div className="bg-ypCard border border-ypBorder rounded-2xl shadow-xl overflow-hidden">
-                                    <div className="p-4 border-b border-ypBorder flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                                        <h2 className="text-lg font-medium text-white flex items-center gap-2">
-                                            <IcoCalendar /> Termin Listesi
-                                            <span className="text-xs text-ypText2 font-normal ml-2 hidden sm:inline">(Düzenlemek için satıra tıklayın)</span>
-                                        </h2>
-                                        <div className="flex flex-wrap gap-2 p-1 bg-ypDark rounded-lg">
-                                            <FilterBtn label="Bekleyenler" active={filterStatus === 'PENDING_ALL'} onClick={() => setFilterStatus('PENDING_ALL')} />
-                                            <FilterBtn label="Acil" active={filterStatus === 'DANGER'} onClick={() => setFilterStatus('DANGER')} className="text-red-400 hover:text-red-300" />
-                                            <FilterBtn label="Yaklaşan" active={filterStatus === 'WARNING'} onClick={() => setFilterStatus('WARNING')} className="text-amber-400 hover:text-amber-300" />
-                                            <FilterBtn label="Tamamlananlar" active={filterStatus === 'DELIVERED'} onClick={() => setFilterStatus('DELIVERED')} className="text-emerald-400 hover:text-emerald-300" />
-                                        </div>
-                                    </div>
-
-                                    <div className="overflow-x-auto">
-                                        <table className="w-full text-left border-collapse min-w-[800px]">
-                                            <thead>
-                                                <tr className="bg-ypDark/50 text-ypText2 text-sm uppercase tracking-wider">
-                                                    <th className="py-4 px-6 font-medium">Cari Unvan</th>
-                                                    <th className="py-4 px-6 font-medium">Sipariş Tar.</th>
-                                                    <th className="py-4 px-6 font-medium">Malzeme Açıklama</th>
-                                                    <th className="py-4 px-6 font-medium text-right">Miktar</th>
-                                                    <th className="py-4 px-6 font-medium text-center">Termin</th>
-                                                    <th className="py-4 px-6 font-medium text-center">Durum</th>
-                                                    <th className="py-4 px-6 font-medium text-right">İşlemler</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-ypBorder/50">
-                                                {filteredData.length > 0 ? (
-                                                    filteredData.map((row) => {
-                                                        const status = getStatusInfo(row.termin, row.status);
-                                                        const termDate = row.termin ? new Date(row.termin).toLocaleDateString('tr-TR', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
-                                                        const isDelivered = row.status === 'DELIVERED';
-                                                        
-                                                        if (editingRowId === row.id) {
-                                                            return (
-                                                                <tr key={row.id} className="bg-ypTeal/10 border-l-2 border-ypTeal shadow-lg">
-                                                                    <td className="py-3 px-4"><input type="text" value={editForm.cari} onChange={e => setEditForm({...editForm, cari: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none" placeholder="Cari..." /></td>
-                                                                    <td className="py-3 px-4"><input type="date" value={editForm.siparisTarihi} onChange={e => setEditForm({...editForm, siparisTarihi: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none [color-scheme:dark]" title="Sipariş Tarihi" /></td>
-                                                                    <td className="py-3 px-4"><input type="text" value={editForm.malzeme} onChange={e => setEditForm({...editForm, malzeme: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none" placeholder="Malzeme..." /></td>
-                                                                    <td className="py-3 px-4"><input type="number" min="0" value={editForm.miktar} onChange={e => setEditForm({...editForm, miktar: e.target.value})} className="w-full min-w-[60px] bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none text-right" placeholder="Miktar" /></td>
-                                                                    <td className="py-3 px-4"><input type="date" value={editForm.termin || ''} onChange={e => setEditForm({...editForm, termin: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded px-2 py-1 text-sm text-white focus:border-ypTeal outline-none [color-scheme:dark]" title="Termin Tarihi" /></td>
-                                                                    <td className="py-3 px-4 text-center text-xs text-ypTeal font-medium">Düzenleniyor...</td>
-                                                                    <td className="py-3 px-4 text-right">
-                                                                        <div className="flex items-center justify-end gap-2">
-                                                                            <button onClick={() => handleSaveEdit(row.id)} className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-white transition-colors" title="Kaydet"><IcoCheck /></button>
-                                                                            <button onClick={() => setEditingRowId(null)} className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-white transition-colors border border-ypBorder" title="İptal">✕</button>
-                                                                        </div>
-                                                                    </td>
-                                                                </tr>
-                                                            );
-                                                        }
-
-                                                        return (
-                                                            <tr key={row.id} className={`transition-colors group ${isDelivered ? 'bg-ypDark/20 opacity-75' : 'hover:bg-white/[0.04] cursor-pointer'}`}>
-                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 font-medium whitespace-nowrap ${isDelivered ? 'text-ypText2 line-through' : 'text-white'}`}>{row.cari}</td>
-                                                                <td onClick={() => handleRowClick(row)} className="py-4 px-6 text-ypText2 text-sm whitespace-nowrap">{row.tarih}</td>
-                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-sm max-w-[200px] truncate ${isDelivered ? 'text-ypText2' : 'text-ypText1'}`} title={row.malzeme}>{row.malzeme}</td>
-                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-right font-medium ${isDelivered ? 'text-ypText2' : 'text-white'}`}>{row.miktar != null ? row.miktar : '-'}</td>
-                                                                <td onClick={() => handleRowClick(row)} className={`py-4 px-6 text-center text-sm font-semibold tracking-wide ${isDelivered ? 'text-ypText2' : 'text-ypText1'}`}>{termDate}</td>
-                                                                <td onClick={() => handleRowClick(row)} className="py-4 px-6 flex justify-center">
-                                                                    <div className={`px-3 py-1 rounded-full border flex items-center gap-2 text-xs font-medium ${status.color}`}>
-                                                                        <span className={`w-2 h-2 rounded-full ${status.dot} ${status.type === 'DANGER' && !isDelivered ? 'animate-pulse' : ''}`}></span>
-                                                                        {status.label}
-                                                                    </div>
-                                                                </td>
-                                                                <td className="py-4 px-6 text-right cursor-default">
-                                                                    <div className="flex items-center justify-end gap-2 opacity-100 sm:opacity-50 group-hover:opacity-100 transition-opacity">
-                                                                        {!isDelivered ? (
-                                                                            <button onClick={() => toggleStatus(row.id, row.status)} title="Teslim Edildi İşaretle" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-emerald-400 hover:bg-emerald-400/10 transition-colors"><IcoCheck /></button>
-                                                                        ) : (
-                                                                            <button onClick={() => toggleStatus(row.id, row.status)} title="Geri Al" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-amber-400 hover:bg-amber-400/10 transition-colors"><IcoUndo /></button>
-                                                                        )}
-                                                                        <button onClick={() => deleteTermin(row.id)} title="Sil" className="p-2 rounded-lg bg-ypDark text-ypText2 hover:text-red-400 hover:bg-red-400/10 transition-colors"><IcoTrash /></button>
-                                                                    </div>
-                                                                </td>
-                                                            </tr>
-                                                        );
-                                                    })
-                                                ) : (
-                                                    <tr>
-                                                        <td colSpan="7" className="py-12 text-center text-ypText2">
-                                                            Aradığınız kriterlere uygun kayıt bulunamadı.
-                                                        </td>
-                                                    </tr>
-                                                )}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            </>
-                        )}
-                    </main>
-
-                    {isModalOpen && <AddModal onClose={() => setIsModalOpen(false)} onSave={handleAddTermin} />}
-
-                </div>
-            );
-        }
-
-        function StatCard({ title, value, icon, color, danger }) {
-            return (
-                <div className={`bg-ypCard border ${danger ? 'border-red-500/50 shadow-[0_0_15px_rgba(239,68,68,0.15)]' : 'border-ypBorder'} rounded-2xl p-5 flex items-center gap-4 transition-transform hover:scale-[1.02]`}>
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 ${color}`}>{icon}</div>
-                    <div className="overflow-hidden">
-                        <p className="text-ypText2 text-sm font-medium truncate">{title}</p>
-                        <p className="text-2xl font-bold text-white mt-1 truncate">{value}</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            );
-        }
+            </div>
+        </div>
+    </main>
 
-        function FilterBtn({ label, active, onClick, className = '' }) {
-            return (
-                <button onClick={onClick} className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${active ? 'bg-ypCard text-white shadow-sm' : 'text-ypText2 hover:text-white ' + className}`}>
-                    {label}
-                </button>
-            );
-        }
-
-        function AddModal({ onClose, onSave }) {
-            const todayStr = new Date().toISOString().split('T')[0];
-            const [formData, setFormData] = React.useState({ cari: '', malzeme: '', miktar: '', termin: '', siparisTarihi: todayStr });
-
-            const handleSubmit = (e) => {
-                e.preventDefault();
-                onSave(formData);
-            };
-
-            return (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay">
-                    <div className="bg-ypCard border border-ypBorder rounded-2xl w-full max-w-lg shadow-2xl animate-[fadeIn_0.2s_ease-out]">
-                        <div className="p-5 border-b border-ypBorder flex justify-between items-center">
-                            <h2 className="text-lg font-semibold text-white flex items-center gap-2"><IcoPlus /> Yeni Termin Ekle</h2>
-                            <button onClick={onClose} className="text-ypText2 hover:text-white transition-colors">✕</button>
-                        </div>
-                        <form onSubmit={handleSubmit} className="p-5 flex flex-col gap-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="col-span-2 sm:col-span-1">
-                                    <label className="block text-sm font-medium text-ypText2 mb-1">Cari Unvan</label>
-                                    <input required type="text" value={formData.cari} onChange={e => setFormData({...formData, cari: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" placeholder="Örn: Yılkar Tekstil" />
-                                </div>
-                                <div className="col-span-2 sm:col-span-1">
-                                    <label className="block text-sm font-medium text-ypText2 mb-1">Sipariş Tarihi</label>
-                                    <input required type="date" value={formData.siparisTarihi} onChange={e => setFormData({...formData, siparisTarihi: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal [color-scheme:dark]" />
-                                </div>
+    <!-- ============================================== -->
+    <!-- FOOTER (footer.twig)                           -->
+    <!-- ============================================== -->
+    <footer id="footer" class="bg-[#111827] text-white pt-16">
+        
+        <div class="container mx-auto px-4">
+            <!-- Row 1 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-12 mb-12">
+                
+                <!-- Col 1: Logo & Contact -->
+                <div class="space-y-6">
+                    <img src="https://placehold.co/200x50/111827/ffffff?text=LOGO+WHITE" alt="Logo" class="h-10">
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        En kaliteli ürünleri en uygun fiyatlarla kapınıza getiriyoruz. Güvenli alışverişin adresi.
+                    </p>
+                    <div class="space-y-4">
+                        <a href="tel:08501234567" class="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors group">
+                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                                    <path d="M28 20.0003V14.667C28 8.03958 22.6274 2.66699 16 2.66699V2.66699C9.37258 2.66699 4 8.03958 4 14.667V20.0003" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <rect x="4" y="13.333" width="5.33333" height="9.33333" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <rect x="22.6667" y="13.333" width="5.33333" height="9.33333" rx="2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <rect x="12.6667" y="25.333" width="6.66667" height="4" rx="1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                    <path d="M12.6667 27.3337H10.6667C8.45761 27.3337 6.66675 25.5428 6.66675 23.3337V22.667" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-ypText2 mb-1">Malzeme Açıklama</label>
-                                <input required type="text" value={formData.malzeme} onChange={e => setFormData({...formData, malzeme: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" placeholder="Örn: YAN 1183 EKRU" />
+                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Müşteri Hizmetleri</div>
+                                <div class="font-semibold text-sm">0850 123 45 67</div>
                             </div>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-ypText2 mb-1">Miktar <span className="text-xs opacity-70 font-normal">(Opsiyonel)</span></label>
-                                    <input type="number" min="0" value={formData.miktar} onChange={e => setFormData({...formData, miktar: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal" placeholder="0" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-ypText2 mb-1">Termin Tarihi <span className="text-xs opacity-70 font-normal">(Opsiyonel)</span></label>
-                                    <input type="date" value={formData.termin} onChange={e => setFormData({...formData, termin: e.target.value})} className="w-full bg-ypDark border border-ypBorder rounded-lg px-3 py-2 text-white focus:outline-none focus:border-ypTeal [color-scheme:dark]" />
-                                </div>
+                        </a>
+                        <a href="mailto:info@site.com" class="flex items-center space-x-4 text-gray-300 hover:text-white transition-colors group">
+                            <div class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center group-hover:bg-blue-600 transition-colors">
+                                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                                    <path d="M22.6667 27.3337H9.33341C5.33341 27.3337 2.66675 25.3337 2.66675 20.667V11.3337C2.66675 6.66699 5.33341 4.66699 9.33341 4.66699H22.6667C26.6667 4.66699 29.3334 6.66699 29.3334 11.3337V20.667C29.3334 25.3337 26.6667 27.3337 22.6667 27.3337Z" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M22.6666 12L18.4932 15.3333C17.1199 16.4267 14.8666 16.4267 13.4932 15.3333L9.33325 12" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
                             </div>
-                            <div className="flex justify-end gap-3 mt-4">
-                                <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-ypText2 hover:text-white transition-colors">İptal</button>
-                                <button type="submit" className="px-4 py-2 text-sm font-semibold bg-ypTeal text-ypDark rounded-lg hover:bg-ypTealLight transition-colors">Kaydet</button>
+                            <div>
+                                <div class="text-[10px] text-gray-500 uppercase tracking-wider">Bize Ulaşın</div>
+                                <div class="font-semibold text-sm">info@siteniz.com</div>
                             </div>
-                        </form>
+                        </a>
                     </div>
                 </div>
-            );
-        }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
+                <!-- Col 2: Kurumsal -->
+                <div>
+                    <h3 class="font-bold text-lg mb-6 relative inline-block">
+                        Kurumsal
+                        <span class="absolute bottom--2 left-0 w-1/2 h-0.5 bg-blue-600"></span>
+                    </h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Hakkımızda</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Kariyer</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Gizlilik Sözleşmesi</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Mesafeli Satış Sözleşmesi</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 3: Müşteri -->
+                <div>
+                    <h3 class="font-bold text-lg mb-6 relative inline-block">
+                        Yardım & Destek
+                        <span class="absolute bottom--2 left-0 w-1/2 h-0.5 bg-blue-600"></span>
+                    </h3>
+                    <ul class="space-y-3 text-sm text-gray-400">
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Sıkça Sorulan Sorular</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">Kargo ve Teslimat</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">İade ve Değişim</a></li>
+                        <li><a href="#" class="hover:text-white hover:translate-x-1 inline-block transition-transform">İletişim</a></li>
+                    </ul>
+                </div>
+
+                <!-- Col 4: Bülten -->
+                <div>
+                    <h3 class="font-bold text-lg mb-6">E-Bülten Kayıt</h3>
+                    <p class="text-sm text-gray-400 mb-4 leading-relaxed">Kampanyalardan ve yeni ürünlerden anında haberdar olmak için bültenimize abone olun.</p>
+                    <form class="flex flex-col space-y-3">
+                        <input type="email" placeholder="E-Posta Adresiniz" class="w-full bg-gray-800 border border-gray-700 text-white text-sm rounded-lg px-4 py-3 focus:outline-none focus:border-blue-500 transition-colors">
+                        <button type="button" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm rounded-lg px-4 py-3 transition-colors">
+                            Abone Ol
+                        </button>
+                    </form>
+                    
+                    <!-- Sosyal Medya İkonları (footer.twig makroları) -->
+                    <div class="flex space-x-4 mt-8">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.5 3H16.504C18.987 3 21 5.013 21 7.496V16.505C21 18.987 18.987 21 16.504 21H7.496C5.013 21 3 18.987 3 16.504V7.5C3 5.015 5.015 3 7.5 3V3Z" stroke="currentColor" stroke-linecap="round"/><path d="M11.0996 12.9004H16.4996" stroke="currentColor" stroke-linecap="round"/><path d="M16.5004 8.40039H15.5554C14.0894 8.40039 12.9004 9.58939 12.9004 11.0554V12.0004V21.0004" stroke="currentColor" stroke-linecap="round"/></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.496 3H16.505C18.987 3 21 5.012 21 7.496V16.505C21 18.987 18.988 21 16.504 21H7.496C5.013 21 3 18.988 3 16.504V7.496C3 5.013 5.012 3 7.496 3V3Z" stroke="currentColor" stroke-linecap="round"/><path d="M16.9487 6.71328C16.7627 6.71428 16.6117 6.86528 16.6117 7.05128C16.6117 7.23728 16.7637 7.38828 16.9497 7.38828" stroke="currentColor" stroke-linecap="round"/><path d="M14.546 9.45481C15.9519 10.8607 15.9519 13.1401 14.546 14.546C13.1401 15.9519 10.8607 15.9519 9.45481 14.546C8.04892 13.1401 8.04892 10.8607 9.45481 9.45481C10.8607 8.04892 13.1401 8.04892 14.546 9.45481" stroke="currentColor" stroke-linecap="round"/></svg></a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors"><svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M4.102 3.88379H8.812L13.005 9.88079L18.04 3.88379H19.545L13.58 10.7038L20 19.8838H15.29L10.911 13.6218L5.504 19.8838H4L10.337 12.8008L4.102 3.88379ZM5.96 4.82479L15.832 18.9428H18.142L8.27 4.82379L5.96 4.82479Z"/></svg></a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Copyright Bottom -->
+        <div class="border-t border-gray-800 bg-[#0B0F19] py-6">
+            <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <svg width="24" height="24" viewBox="0 0 24 30" fill="currentColor"><path d="M9.81843 0.00012353C8.09944 -0.0104621 6.44612 0.659671 5.21962 1.86414C3.99312 3.0686 3.29313 4.70951 3.27255 6.4284V10.7135C2.84452 10.7019 2.41854 10.7767 2.02005 10.9334C1.62156 11.0901 1.25876 11.3255 0.953304 11.6256C0.647852 11.9257 0.406022 12.2842 0.242265 12.6799C0.0785087 13.0755 -0.00381455 13.5001 0.000214091 13.9283V20.3565C-0.00831839 21.6309 0.238273 22.8941 0.725461 24.0716C1.21265 25.2492 1.93058 26.3174 2.83696 27.2132C4.70779 29.023 7.21562 30.0239 9.81843 29.9996C12.0302 30.0166 14.1826 29.2847 15.9256 27.923C17.6686 26.5613 18.8996 24.6499 19.4183 22.4997H19.6367C20.208 22.5164 20.7763 22.4103 21.3031 22.1886C21.8299 21.9669 22.3031 21.6347 22.6906 21.2145C23.0985 20.8276 23.4246 20.3627 23.6495 19.8473C23.8743 19.332 23.9935 18.7768 23.9998 18.2146C24.0042 17.6507 23.8899 17.0922 23.6643 16.5753C23.4388 16.0585 23.107 15.5949 22.6906 15.2146C21.8661 14.4241 20.7783 13.9663 19.6367 13.9295C19.6407 13.5013 19.5584 13.0767 19.3946 12.6811C19.2308 12.2854 18.989 11.9269 18.6836 11.6268C18.3781 11.3267 18.0153 11.0913 17.6168 10.9346C17.2183 10.7779 16.7923 10.7031 16.3643 10.7147V6.4284C16.3437 4.70951 15.6437 3.0686 14.4172 1.86414C13.1907 0.659671 11.5374 -0.0104621 9.81843 0.00012353ZM21.1642 16.7146C21.3707 16.9061 21.5354 17.1382 21.648 17.3963C21.7606 17.6544 21.8188 17.933 21.8188 18.2146C21.8188 18.4962 21.7606 18.7748 21.648 19.0329C21.5354 19.291 21.3707 19.523 21.1642 19.7146C20.8585 19.9897 20.4882 20.1831 20.0877 20.2767C19.6871 20.3703 19.2694 20.361 18.8735 20.2497C18.5314 20.1293 18.2259 19.9232 17.9861 19.6511C17.7463 19.379 17.5803 19.05 17.5037 18.6955C17.4272 18.341 17.4428 17.9728 17.5489 17.626C17.6551 17.2793 17.8484 16.9655 18.1103 16.7146C18.3589 16.4751 18.6565 16.2925 18.9827 16.1794C19.189 16.0922 19.4133 16.0556 19.6367 16.0726C20.2102 16.0768 20.7589 16.3076 21.163 16.7146H21.1642ZM17.4551 13.9295V14.5727C17.1456 14.7605 16.8536 14.9757 16.5827 15.2158C16.0178 15.7219 15.6346 16.3993 15.4919 17.1442H5.45411C5.30992 17.1342 5.16525 17.1548 5.02964 17.2049C4.89404 17.2549 4.77061 17.3332 4.6675 17.4345C4.56439 17.5357 4.48396 17.6578 4.43153 17.7925C4.37909 17.9272 4.35585 18.0714 4.36333 18.2158V20.3589C4.35585 20.5033 4.37909 20.6476 4.43153 20.7823C4.48396 20.917 4.56439 21.039 4.6675 21.1403C4.77061 21.2416 4.89404 21.3198 5.02964 21.3699C5.16525 21.4199 5.30992 21.4406 5.45411 21.4305C5.5983 21.4406 5.74298 21.4199 5.87858 21.3699C6.01418 21.3198 6.13762 21.2416 6.24073 21.1403C6.34383 21.039 6.42426 20.917 6.4767 20.7823C6.52913 20.6476 6.55238 20.5033 6.54489 20.3589V19.2874H8.72645V20.3589C8.72645 20.6482 8.84137 20.9257 9.04593 21.1302C9.25049 21.3348 9.52794 21.4497 9.81723 21.4497C10.1065 21.4497 10.384 21.3348 10.5885 21.1302C10.7931 20.9257 10.908 20.6482 10.908 20.3589V19.2874H15.3803C15.7007 20.3241 16.3519 21.2274 17.2343 21.8589C16.8909 23.5668 15.9617 25.1011 14.6072 26.1967C13.2527 27.2922 11.558 27.8801 9.81603 27.8588C7.79117 27.8666 5.83996 27.0999 4.36213 25.7156C3.66018 25.013 3.10563 24.1772 2.73101 23.2574C2.35639 22.3375 2.16925 21.3521 2.18057 20.3589V13.9283C2.17309 13.7839 2.19634 13.6396 2.24877 13.5049C2.3012 13.3702 2.38163 13.2482 2.48474 13.1469C2.58785 13.0456 2.71128 12.9674 2.84688 12.9174C2.98249 12.8673 3.12716 12.8466 3.27135 12.8567H16.3631C16.5073 12.8466 16.652 12.8673 16.7876 12.9174C16.9232 12.9674 17.0466 13.0456 17.1497 13.1469C17.2528 13.2482 17.3333 13.3702 17.3857 13.5049C17.4381 13.6396 17.4614 13.7839 17.4539 13.9283L17.4551 13.9295Z"/></svg>
+                    <span>&copy; 2026 E-Ticaret A.Ş. Tüm hakları saklıdır.</span>
+                </div>
+                <div class="flex space-x-4">
+                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=SSL" alt="SSL" class="h-6 rounded">
+                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=Visa" alt="Visa" class="h-6 rounded">
+                    <img src="https://placehold.co/50x30/1e293b/94a3b8?text=MC" alt="MasterCard" class="h-6 rounded">
+                </div>
+            </div>
+        </div>
+    </footer>
+
 </body>
 </html>
-
-
-```
